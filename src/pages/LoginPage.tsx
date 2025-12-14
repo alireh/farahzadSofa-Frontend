@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../styles/login.css";
 
-function Login() {
+function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e:any) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
     setError("");
 
@@ -26,12 +26,18 @@ function Login() {
         return;
       }
 
-      localStorage.setItem("admin_token", data.token);
-      navigate("/admin"); // مسیر پنل ادمین
+      localStorage.setItem("token", data.token);
+      // localStorage.setItem("admin_token", data.token);
+      // navigate("/admin"); // مسیر پنل ادمین
     } catch (err) {
       setError("خطا در اتصال به سرور");
     }
   };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  }
 
   return (
     <div className="page-container page">
@@ -92,4 +98,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default LoginPage;
