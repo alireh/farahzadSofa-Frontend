@@ -1,6 +1,8 @@
 export interface SiteData {
   about: string;
   address: string;
+  email: string;
+  phone: string;
   images: Image[];
 }
 

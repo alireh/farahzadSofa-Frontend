@@ -1,0 +1,213 @@
+.dropdown {
+    position: relative;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+}
+
+.dropdown-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 48px;
+}
+
+.dropdown-header:hover {
+    border-color: #667eea;
+}
+
+.dropdown-header.dropdown-open {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-radius: 8px 8px 0 0;
+}
+
+.dropdown-header-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.dropdown-title {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+}
+
+.dropdown-selected {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dropdown-icons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 8px;
+}
+
+.dropdown-clear {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.dropdown-clear:hover {
+    background-color: #f0f0f0;
+    color: #ff4444;
+}
+
+.dropdown-arrow {
+    color: #666;
+    font-size: 10px;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-open .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-list {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    background-color: white;
+    border: 2px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-no-items {
+    padding: 16px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+}
+
+.dropdown-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9ff;
+    padding-right: 20px;
+}
+
+.dropdown-item-selected {
+    background-color: #f0f4ff;
+    color: #667eea;
+    font-weight: 500;
+}
+
+.dropdown-item-selected:hover {
+    background-color: #e8ecff;
+}
+
+.dropdown-checkbox {
+    font-size: 14px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dropdown-item-text {
+    flex: 1;
+}
+
+/* استایل‌های واکنش‌گرا */
+@media (max-width: 768px) {
+    .dropdown-header {
+        padding: 10px 14px;
+        min-height: 44px;
+    }
+    
+    .dropdown-item {
+        padding: 10px 14px;
+    }
+}
+
+/* اسکرول بار زیبا */
+.dropdown-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+/* اضافه کردن این استایل‌ها به فایل CSS موجود */
+
+.dropdown-selected-indicator {
+    color: #667eea;
+    font-weight: bold;
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+/* استایل برای حالت required */
+.dropdown-header.required {
+    border-color: #ff6b6b;
+}
+
+.dropdown-clear:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* استایل برای نمایش ایندکس کنار آیتم (اختیاری) */
+.dropdown-item-index {
+    font-size: 11px;
+    color: #999;
+    background: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 8px;
+}
