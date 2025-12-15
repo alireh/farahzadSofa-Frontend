@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { SiteData, Image } from "../types";
+import api from "../api"; // instance با token خودکار
+import { SiteData } from "../types";
 import Dropdown from "../components/dropdown";
 
 const AdminPage: React.FC = () => {
@@ -12,6 +12,9 @@ const AdminPage: React.FC = () => {
   const [addressText, setAddressText] = useState("");
   const [emailText, setEmailText] = useState("");
   const [phoneText, setPhoneText] = useState("");
+  const [imgType, setImgType] = useState(0);
+
+  const categories = ["تصاویر دسته بندی", "تصویر اصلی سایت"];
 
   useEffect(() => {
     fetchAdminData();
@@ -19,7 +22,7 @@ const AdminPage: React.FC = () => {
 
   const fetchAdminData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/admin/data");
+      const response = await api.get("/admin/data");
       setData(response.data);
       setAboutText(response.data.about);
       setAddressText(response.data.address);
@@ -27,14 +30,15 @@ const AdminPage: React.FC = () => {
       setPhoneText(response.data.phone);
     } catch (error) {
       console.error("Error fetching admin data:", error);
+      alert("لطفا ابتدا وارد شوید");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setSelectedFile(event.target.files[0]);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
     }
   };
 
@@ -50,10 +54,8 @@ const AdminPage: React.FC = () => {
     if (imageTitle) formData.append("title", imageTitle);
 
     try {
-      await axios.post("http://localhost:5000/api/admin/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      await api.post("/admin/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
       alert("تصویر با موفقیت آپلود شد");
       setSelectedFile(null);
@@ -66,20 +68,21 @@ const AdminPage: React.FC = () => {
   };
 
   const handleDeleteImage = async (id: number) => {
-    if (window.confirm("آیا از حذف این تصویر مطمئنید؟")) {
-      try {
-        await axios.delete(`http://localhost:5000/api/admin/image/${id}`);
-        alert("تصویر حذف شد");
-        fetchAdminData();
-      } catch (error) {
-        console.error("Error deleting image:", error);
-      }
+    if (!window.confirm("آیا از حذف این تصویر مطمئنید؟")) return;
+
+    try {
+      await api.delete(`/admin/image/${id}`);
+      alert("تصویر حذف شد");
+      fetchAdminData();
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      alert("خطا در حذف تصویر");
     }
   };
 
   const handleUpdateContent = async () => {
     try {
-      await axios.put("http://localhost:5000/api/admin/update-content", {
+      await api.put("/admin/update-content", {
         about: aboutText,
         address: addressText,
         email: emailText,
@@ -89,141 +92,80 @@ const AdminPage: React.FC = () => {
       fetchAdminData();
     } catch (error) {
       console.error("Error updating content:", error);
+      alert("خطا در به‌روزرسانی محتوا");
     }
   };
 
   if (loading) return <div>در حال بارگذاری...</div>;
   if (!data) return <div>خطا در دریافت اطلاعات</div>;
 
-  const categories = [
-    "تصاویر دسته بندی",
-    "تصویر اصلی سایت"
-  ];
-
-  let imgType = 1;
-  const handleSelect = (item: string, index: number) => {
-    imgType = index;
-    console.log("آیتم انتخاب شد:", item, "ایندکس:", index);
-    // انجام عملیات مورد نظر
-  };
-
   return (
     <div style={styles.container}>
       <header style={styles.header}>
         <h1>پنل مدیریت</h1>
-        <a href="/" style={styles.backLink}>
-          بازگشت به سایت
-        </a>
+        <a href="/" style={styles.backLink}>بازگشت به سایت</a>
       </header>
 
       <div style={styles.sectionsContainer}>
-        {/* بخش آپلود تصویر */}
+        {/* آپلود تصویر */}
         <section style={styles.section}>
           <h2>آپلود تصویر جدید</h2>
           <div style={styles.uploadForm}>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              style={styles.fileInput}
-            />
-            <input
-              type="text"
-              placeholder="عنوان تصویر"
-              value={imageTitle}
-              onChange={(e) => setImageTitle(e.target.value)}
-              style={styles.textInput}
-            />
+            <input type="file" accept="image/*" onChange={handleFileChange} style={styles.fileInput} />
+            <input type="text" placeholder="عنوان تصویر" value={imageTitle} onChange={(e) => setImageTitle(e.target.value)} style={styles.textInput} />
             <Dropdown
               title="نوع تصویر"
               items={categories}
-              onSelect={handleSelect}
+              onSelect={(item, index) => setImgType(index)}
               defaultIndex={0}
-              placeholder="انتخاب کنید..."
               width="300px"
             />
-            <button onClick={handleUpload} style={styles.uploadButton}>
-              آپلود تصویر
-            </button>
+            <button onClick={handleUpload} style={styles.uploadButton}>آپلود تصویر</button>
           </div>
         </section>
 
-        {/* بخش مدیریت تصاویر */}
+        {/* مدیریت تصاویر */}
         <section style={styles.section}>
           <h2>تصاویر موجود</h2>
           <div style={styles.imageList}>
-            {data.images.map((image) => (
-              <div key={image.id} style={styles.imageItem}>
-                <img
-                  src={`http://localhost:5000${image.url}`}
-                  alt={image.title}
-                  style={styles.adminImage}
-                />
-                <p>{image.title}</p>
-                <button
-                  onClick={() => handleDeleteImage(image.id)}
-                  style={styles.deleteButton}
-                >
-                  حذف
-                </button>
+            {data.images.map((img) => (
+              <div key={img.id} style={styles.imageItem}>
+                <img src={`http://localhost:5000${img.url}`} alt={img.title} style={styles.adminImage} />
+                <p>{img.title}</p>
+                <button onClick={() => handleDeleteImage(img.id)} style={styles.deleteButton}>حذف</button>
               </div>
             ))}
           </div>
         </section>
 
-        {/* بخش ویرایش محتوا */}
+        {/* ویرایش محتوا */}
         <section style={styles.section}>
           <h2>ویرایش محتوا</h2>
           <div style={styles.contentForm}>
             <div style={styles.formGroup}>
               <label>درباره ما:</label>
-              <textarea
-                value={aboutText}
-                onChange={(e) => setAboutText(e.target.value)}
-                style={styles.textarea}
-                rows={4}
-              />
+              <textarea value={aboutText} onChange={(e) => setAboutText(e.target.value)} style={styles.textarea} rows={4} />
             </div>
-
             <div style={styles.formGroup}>
               <label>آدرس:</label>
-              <input
-                type="text"
-                value={addressText}
-                onChange={(e) => setAddressText(e.target.value)}
-                style={styles.textInput}
-              />
+              <input type="text" value={addressText} onChange={(e) => setAddressText(e.target.value)} style={styles.textInput} />
             </div>
-
             <div style={styles.formGroup}>
               <label>ایمیل:</label>
-              <input
-                type="text"
-                value={emailText}
-                onChange={(e) => setEmailText(e.target.value)}
-                style={styles.textInput}
-              />
+              <input type="text" value={emailText} onChange={(e) => setEmailText(e.target.value)} style={styles.textInput} />
             </div>
-
             <div style={styles.formGroup}>
               <label>تلفن:</label>
-              <input
-                type="text"
-                value={phoneText}
-                onChange={(e) => setPhoneText(e.target.value)}
-                style={styles.textInput}
-              />
+              <input type="text" value={phoneText} onChange={(e) => setPhoneText(e.target.value)} style={styles.textInput} />
             </div>
-
-            <button onClick={handleUpdateContent} style={styles.updateButton}>
-              ذخیره تغییرات
-            </button>
+            <button onClick={handleUpdateContent} style={styles.updateButton}>ذخیره تغییرات</button>
           </div>
         </section>
       </div>
     </div>
   );
 };
+
 
 const styles = {
   container: {

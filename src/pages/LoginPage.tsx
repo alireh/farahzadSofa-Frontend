@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 
 function LoginPage() {
@@ -8,8 +8,8 @@ function LoginPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e: any) => {
-    e.preventDefault();
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault(); // ⬅️ اولین خط
     setError("");
 
     try {
@@ -27,9 +27,8 @@ function LoginPage() {
       }
 
       localStorage.setItem("token", data.token);
-      // localStorage.setItem("admin_token", data.token);
-      // navigate("/admin"); // مسیر پنل ادمین
-    } catch (err) {
+      navigate("/admin", { replace: true });
+    } catch {
       setError("خطا در اتصال به سرور");
     }
   };
@@ -37,18 +36,13 @@ function LoginPage() {
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
-  }
+  };
 
   return (
     <div className="page-container page">
       <main className="main-content">
         <div className="grid">
-          <form
-            action="https://httpbin.org/post"
-            method="POST"
-            className="form login"
-            onSubmit={handleLogin}
-          >
+          <form className="form login" onSubmit={handleLogin}>
             <div className="form__field">
               <label htmlFor="login__username">
                 <svg className="icon">
