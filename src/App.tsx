@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import HomePage from './pages/HomePage';
 import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/protectedRoute';
 
 
 function App() {
