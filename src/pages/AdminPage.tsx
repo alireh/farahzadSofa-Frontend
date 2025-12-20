@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import api from "../api"; // instance با token خودکار
 import { Image, SiteData, SocialLink, Product, Category } from "../types";
 import Dropdown from "../components/dropdown";
+import { Navigate } from "react-router-dom";
+import SocialLinksManager from "../components/SocialLinksManager";
+import AdminSocialLinks from "../components/SocialLinksManager";
 
 const AdminPage: React.FC = () => {
   const [data, setData] = useState<SiteData | null>(null);
@@ -65,6 +68,8 @@ const AdminPage: React.FC = () => {
   const [editingSocialLink, setEditingSocialLink] = useState<number | null>(null);
   const [socialLinkUrl, setSocialLinkUrl] = useState("");
 
+  const [activeTab, setActiveTab] = useState<'categories' | 'products' | 'carousel' | 'articles' | 'social'>('categories');
+
   useEffect(() => {
 
 
@@ -111,7 +116,7 @@ const AdminPage: React.FC = () => {
 
   const fetchSocialLinks = async () => {
     try {
-      const response = await api.get("/api/admin/social-links");
+      const response = await api.get("http://localhost:5000/api/admin/social-links");
       setSocialLinks(response.data);
     } catch (error) {
       console.error("Error fetching social links:", error);
@@ -571,7 +576,10 @@ const AdminPage: React.FC = () => {
   };
 
   if (loading) return <div>در حال بارگذاری...</div>;
-  if (!data) return <div>خطا در دریافت اطلاعات</div>;
+  if (!data) {
+    return <Navigate to="/login" replace />;
+    // return <div>خطا در دریافت اطلاعات</div>;
+  }
 
   return (
     <div style={styles.container}>
@@ -1231,7 +1239,7 @@ const AdminPage: React.FC = () => {
         {/* مدیریت شبکه‌های اجتماعی */}
         <section style={styles.section}>
           <h2>مدیریت شبکه‌های اجتماعی</h2>
-          <div style={styles.socialLinksList}>
+          {/* <div style={styles.socialLinksList}>
             {socialLinks.map((link) => (
               <div key={link.id} style={styles.socialLinkItem}>
                 <div style={styles.socialLinkInfo}>
@@ -1284,12 +1292,14 @@ const AdminPage: React.FC = () => {
                 )}
               </div>
             ))}
-          </div>
+          </div> */}
+          <AdminSocialLinks />
         </section>
 
         {/* بقیه بخش‌ها (مقالات، آپلود تصویر، ویرایش محتوا) */}
         {/* ... کدهای قبلی بدون تغییر ... */}
       </div>
+
     </div>
 
 

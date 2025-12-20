@@ -61,6 +61,15 @@ const HomePage: React.FC = () => {
 
   }, []);
 
+  const fetchSocialLinks = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/api/social-links');
+      setSocialLinks(response.data);
+    } catch (error) {
+      console.error('Error fetching social links:', error);
+    }
+  };
+
 
   const fetchCategories = async () => {
     try {
@@ -84,14 +93,29 @@ const HomePage: React.FC = () => {
   };
 
 
-  const fetchSocialLinks = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/social-links");
-      setSocialLinks(response.data);
-    } catch (error) {
-      console.error("Error fetching social links:", error);
-    }
-  };
+  //   const fetchSocialLinks = async () => {
+  //   try {
+  //     const response = await axios.get('/api/social-links');
+  //     // تبدیل آرایه به object با کلید platform
+  //     const linksObject: Record<string, string> = {};
+  //     response.data.forEach((link: SocialLink) => {
+  //       linksObject[link.platform] = link.url;
+  //     });
+  //     setSocialLinks(linksObject);
+  //   } catch (error) {
+  //     console.error('Error fetching social links:', error);
+  //   }
+  // };
+
+
+  // const fetchSocialLinks = async () => {
+  //   try {
+  //     const response = await axios.get("http://localhost:5000/api/social-links");
+  //     setSocialLinks(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching social links:", error);
+  //   }
+  // };
 
 
   // تغییر بخش Hero برای پشتیبانی از Carousel یا تصویر اصلی
@@ -207,6 +231,57 @@ const HomePage: React.FC = () => {
 
   if (loading) return <div>در حال بارگذاری...</div>;
   if (!data) return <div>خطا در دریافت اطلاعات</div>;
+
+
+  // تابع برای دریافت آیکون مناسب
+  const getSocialIcon = (platform: string) => {
+    const icons: Record<string, React.ReactNode> = {
+      telegram: (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="#0088cc">
+          <path d="M9.5 14.5l-2.5-1.5 10-6.5-4.5 8-2-1-3.5 1.5z" />
+          <circle cx="12" cy="12" r="10" fill="none" stroke="#0088cc" strokeWidth="2" />
+        </svg>
+      ),
+      instagram: (
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <radialGradient id="insta-gradient" cx="12" cy="12" r="12">
+            <stop offset="0" stopColor="#fdf497" />
+            <stop offset="0.05" stopColor="#fdf497" />
+            <stop offset="0.45" stopColor="#fd5949" />
+            <stop offset="0.6" stopColor="#d6249f" />
+            <stop offset="0.9" stopColor="#285AEB" />
+          </radialGradient>
+          <circle cx="12" cy="12" r="10" fill="url(#insta-gradient)" />
+          <circle cx="12" cy="12" r="3" fill="white" />
+        </svg>
+      ),
+      youtube: (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="#ff0000">
+          <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
+        </svg>
+      ),
+      aparat: (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="#ff2b2b">
+          <rect x="2" y="2" width="20" height="20" rx="4" />
+          <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10">آ</text>
+        </svg>
+      ),
+      pinterest: (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="#bd081c">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 6c-3.313 0-6 2.686-6 6 0 2.545 1.548 4.726 3.742 5.65-.052-.494-.1-1.252.022-1.79.108-.466.703-2.963.703-2.963s-.18-.36-.18-.893c0-.836.485-1.46 1.09-1.46.514 0 .762.386.762.848 0 .517-.328 1.29-.498 2.005-.142.598.3 1.084.89 1.084 1.07 0 1.894-1.127 1.894-2.755 0-1.44-1.036-2.448-2.515-2.448-1.713 0-2.718 1.284-2.718 2.612 0 .517.198 1.072.447 1.373.05.06.057.112.042.173l-.168.66c-.027.107-.088.13-.204.08-.76-.354-1.235-1.46-1.235-2.35 0-1.916 1.392-3.675 4.02-3.675 2.108 0 3.748 1.503 3.748 3.513 0 2.095-1.32 3.782-3.15 3.782-.615 0-1.193-.32-1.392-.712l-.378 1.44c-.137.525-.508 1.182-.755 1.583.57.176 1.177.27 1.805.27 3.313 0 6-2.687 6-6s-2.687-6-6-6z" fill="white" />
+        </svg>
+      ),
+      whatsapp: (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="#25d366">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M16.75 13.96c.25.13.41.2.46.3.06.11.04.61-.21 1.18-.2.56-1.24 1.1-1.7 1.12-.46.02-.47.36-2.96-.73-2.49-1.09-3.99-3.75-4.11-3.92-.12-.17-.96-1.38-.92-2.61.05-1.22.69-1.8.95-2.04.24-.26.51-.29.68-.26h.47c.15 0 .36-.06.55.45l.69 1.87c.06.13.1.28.01.44l-.27.41-.39.42c-.12.12-.26.25-.12.5.12.26.62 1.09 1.32 1.78.91.88 1.71 1.17 1.95 1.3.24.14.39.12.54-.04l.81-.94c.19-.25.35-.19.58-.11l1.67.88z" fill="white" />
+        </svg>
+      )
+    };
+
+    return icons[platform] || <span>{platform}</span>;
+  };
 
   return (
     <div className="App" dir="rtl">
@@ -523,7 +598,7 @@ const HomePage: React.FC = () => {
         <Footer title="" linkClick={footerLinkClick} />
       </section>
 
-      <div className="social-icons-header">
+      {/* <div className="social-icons-header">
         {socialLinks.map((link) => (
           <a
             key={link.id}
@@ -539,6 +614,46 @@ const HomePage: React.FC = () => {
             />
           </a>
         ))}
+      </div> */}
+
+      {/* <div className="social-section">
+        <h3>ما را در شبکه‌های اجتماعی دنبال کنید</h3>
+        <div className="social-icons">
+          {Object.entries(socialLinks).map(([platform, link]) => (
+            link && (
+              <a
+                key={platform}
+                href={`${link}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`social-icon ${platform}`}
+                title={platform}
+              >
+                {getSocialIcon(platform)}
+              </a>
+            )
+          ))}
+        </div>
+      </div> */}
+
+
+
+      <div className="social-section">
+        <h3>ما را در شبکه‌های اجتماعی دنبال کنید</h3>
+        <div className="social-icons">
+          {socialLinks && Object.entries(socialLinks).map(([platform, url]) => (
+            <a
+              key={platform}
+              href={`${url}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`social-icon ${platform}`}
+              title={platform}
+            >
+              {getSocialIcon(platform)}
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   );

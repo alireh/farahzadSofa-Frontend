@@ -68,7 +68,6 @@ export interface Product {
   is_active: boolean;
   created_at: string;
 }
-
 export interface SocialLink {
   id: number;
   platform: string;
@@ -76,8 +75,8 @@ export interface SocialLink {
   icon: string;
   is_active: boolean;
   display_order: number;
+  created_at?: string;
 }
-
 export interface SiteSettings {
   id: number;
   show_carousel: boolean;
