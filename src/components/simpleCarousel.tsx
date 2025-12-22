@@ -1,49 +1,5 @@
-// import { useEffect, useState } from "react";
-// import "../styles/simpleCarousel.css";
-
-// const images = [
-//     "/images/carousel/img1.jpg",
-//     "/images/carousel/img2.jpg",
-//     "/images/carousel/img3.jpg",
-// ];
-
-// export default function SimpleCarousel() {
-//     const [index, setIndex] = useState(0);
-
-//     useEffect(() => {
-//         const interval = setInterval(() => {
-//             setIndex((prev) => (prev + 1) % images.length);
-//         }, 10000); // هر ۱۰ ثانیه
-
-//         return () => clearInterval(interval);
-//     }, []);
-
-//     return (
-//         <div className="carousel">
-//             {images.map((img, i) => (
-//                 <img
-//                     key={i}
-//                     src={img}
-//                     className={`carousel-image ${i === index ? "active" : ""}`}
-//                     alt="slide"
-//                 />
-//             ))}
-
-//             <div className="dots">
-//                 {images.map((_, i) => (
-//                     <span
-//                         key={i}
-//                         className={i === index ? "dot active" : "dot"}
-//                         onClick={() => setIndex(i)}
-//                     />
-//                 ))}
-//             </div>
-//         </div>
-//     );
-// }
-
-
 import React, { useState, useEffect } from 'react';
+import '../styles/simpleCarousel.css';
 
 interface CarouselProps {
     images: Array<{
@@ -54,24 +10,29 @@ interface CarouselProps {
     showArrows?: boolean;
     autoPlay?: boolean;
     interval?: number;
+    showDots?: boolean;
+    showTitle?: boolean;
 }
 
 const SimpleCarousel: React.FC<CarouselProps> = ({
     images,
     showArrows = true,
     autoPlay = true,
-    interval = 5000
+    interval = 5000,
+    showDots = true,
+    showTitle = true
 }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isHovered, setIsHovered] = useState(false);
 
     useEffect(() => {
-        if (autoPlay && images.length > 1) {
+        if (autoPlay && images.length > 1 && !isHovered) {
             const timer = setInterval(() => {
                 goToNext();
             }, interval);
             return () => clearInterval(timer);
         }
-    }, [currentIndex, autoPlay, interval, images.length]);
+    }, [currentIndex, autoPlay, interval, images.length, isHovered]);
 
     const goToPrevious = () => {
         const isFirstSlide = currentIndex === 0;
@@ -93,51 +54,86 @@ const SimpleCarousel: React.FC<CarouselProps> = ({
         return (
             <div className="carousel-container">
                 <div className="carousel-slide">
-                    <img
-                        src="/images/default-banner.jpg"
-                        alt="Default banner"
-                        className="carousel-image"
-                    />
+                    <div className="no-image-placeholder">
+                        <span>بدون تصویر</span>
+                    </div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="carousel-container">
+        <div
+            className="carousel-container"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            {/* فلش‌های ناوبری */}
             {showArrows && images.length > 1 && (
                 <>
-                    <div className="carousel-arrow left" onClick={goToPrevious}>
-                        ❮
-                    </div>
-                    <div className="carousel-arrow right" onClick={goToNext}>
-                        ❯
-                    </div>
+                    <button
+                        className="carousel-arrow arrow-left"
+                        onClick={goToPrevious}
+                        aria-label="تصویر قبلی"
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </button>
+
+                    <button
+                        className="carousel-arrow arrow-right"
+                        onClick={goToNext}
+                        aria-label="تصویر بعدی"
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </button>
                 </>
             )}
 
-            <div className="carousel-slide">
-                <img
-                    src={`http://localhost:5000${images[currentIndex].url}`}
-                    alt={images[currentIndex].title}
-                    className="carousel-image"
-                />
-                <div className="carousel-title">
-                    <h3>{images[currentIndex].title}</h3>
+            {/* اسلایدها */}
+            <div className="carousel-slides-wrapper">
+                <div className="carousel-slide">
+                    <img
+                        src={`http://localhost:5000${images[currentIndex].url}`}
+                        alt={images[currentIndex].title}
+                        className="carousel-image"
+                        loading="lazy"
+                    />
+
+                    {showTitle && images[currentIndex].title && (
+                        <div className="carousel-title-overlay">
+                            <div className="title-content">
+                                <h3>{images[currentIndex].title}</h3>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
-            {images.length > 1 && (
-                <div className="carousel-dots">
+            {/* نقاط ناوبری */}
+            {showDots && images.length > 1 && (
+                <div className="carousel-dots-container">
                     {images.map((_, slideIndex) => (
-                        <div
+                        <button
                             key={slideIndex}
                             className={`carousel-dot ${slideIndex === currentIndex ? 'active' : ''}`}
                             onClick={() => goToSlide(slideIndex)}
+                            aria-label={`رفتن به اسلاید ${slideIndex + 1}`}
                         >
-                            ●
-                        </div>
+                            <div className="dot-inner"></div>
+                        </button>
                     ))}
+                </div>
+            )}
+
+            {/* شماره اسلاید */}
+            {images.length > 1 && (
+                <div className="slide-counter">
+                    <span className="current-slide">{currentIndex + 1}</span>
+                    <span className="total-slides">/{images.length}</span>
                 </div>
             )}
         </div>

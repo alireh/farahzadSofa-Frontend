@@ -104,7 +104,7 @@ const AdminPage: React.FC = () => {
 
   const fetchSettings = async () => {
     try {
-      const response = await api.get("/api/site-settings");
+      const response = await api.get("/site-settings");
       setShowCarousel(response.data.show_carousel);
       setMaxCarouselItems(response.data.max_carousel_items);
       setArticleDisplayMode(response.data.article_display_mode);

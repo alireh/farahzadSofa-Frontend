@@ -47,7 +47,7 @@ const AdminSocialLinks: React.FC = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/api/api/admin/social-links', {
+            await axios.post('http://localhost:5000/api/admin/social-links', {
                 platform: newPlatform,
                 url: newUrl,
                 icon: newIcon || newPlatform,
@@ -128,7 +128,7 @@ const AdminSocialLinks: React.FC = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.put('http://localhost:5000/api/api/admin/social-links/order', { order }, {
+            await axios.put('http://localhost:5000/api/admin/social-links/order', { order }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

@@ -1,64 +1,21 @@
-.carousel {
-    position: relative;
-    width: 100%;
-    height: 400px;
-    /* ارتفاع اسلایدر */
-    overflow: hidden;
-}
-
-.carousel-image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-
-    opacity: 0;
-    transition: opacity 0.8s ease-in-out;
-}
-
-.carousel-image.active {
-    opacity: 1;
-}
-
-/* dots */
-.dots {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 10px;
-}
-
-.dot {
-    width: 10px;
-    height: 10px;
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.dot.active {
-    background: white;
-}
-
-/* موبایل */
-@media (max-width: 768px) {
-    .carousel {
-        height: 250px;
-    }
-}
-
-
-
-/* استایل‌های جدید برای Carousel */
+/* ===== Modern Carousel Styles ===== */
 .carousel-container {
     position: relative;
     width: 100%;
-    height: 500px;
+    height: 600px;
+    margin: 40px 0;
+    padding: 0 80px;
+    box-sizing: border-box;
     overflow: hidden;
-    margin-bottom: 40px;
+}
+
+.carousel-slides-wrapper {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
 }
 
 .carousel-slide {
@@ -71,321 +28,344 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
 }
 
-.carousel-title {
+.carousel-container:hover .carousel-image {
+    transform: scale(1.02);
+}
+
+/* عنوان تصویر */
+.carousel-title-overlay {
     position: absolute;
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top,
+            rgba(0, 0, 0, 0.9) 0%,
+            rgba(0, 0, 0, 0.7) 50%,
+            transparent 100%);
+    padding: 40px 30px 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
 }
 
+.carousel-container:hover .carousel-title-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.title-content h3 {
+    margin: 0;
+    color: white;
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* فلش‌های ناوبری */
 .carousel-arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 18px;
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
     border-radius: 50%;
-    z-index: 10;
-}
-
-.carousel-arrow.left {
-    left: 20px;
-}
-
-.carousel-arrow.right {
-    right: 20px;
-}
-
-.carousel-dots {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 10px;
-}
-
-.carousel-dot {
-    color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
-    font-size: 12px;
-}
-
-.carousel-dot.active {
-    color: white;
-}
-
-/* استایل‌های دسته‌بندی‌ها */
-.categories-section {
-    padding: 60px 20px;
-    background-color: #f8f9fa;
-}
-
-.categories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 30px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.category-card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.category-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-}
-
-.category-image {
-    height: 200px;
-    overflow: hidden;
-}
-
-.category-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.category-card:hover .category-image img {
-    transform: scale(1.05);
-}
-
-.category-content {
-    padding: 20px;
-}
-
-.category-title {
-    margin: 0 0 10px 0;
-    color: #333;
-    font-size: 18px;
-}
-
-.category-description {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 15px;
-    line-height: 1.5;
-}
-
-.category-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    color: #888;
-}
-
-/* استایل‌های محصولات */
-.category-products-section {
-    padding: 40px 20px;
-    background-color: #fff;
-}
-
-.section-header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.back-to-categories {
-    padding: 8px 16px;
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.back-to-categories:hover {
-    background-color: #5a6268;
-}
-
-.products-grid.detailed {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 30px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.product-card.detailed {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-}
-
-.product-card.detailed .product-image {
-    height: 250px;
-    position: relative;
-}
-
-.discount-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #dc3545;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.product-card.detailed .product-info {
-    padding: 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.product-title {
-    margin: 0 0 10px 0;
-    color: #333;
-    font-size: 16px;
-}
-
-.product-description {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 15px;
-    line-height: 1.5;
-    flex: 1;
-}
-
-.product-features {
-    margin-bottom: 15px;
-}
-
-.product-features h4 {
-    margin: 0 0 5px 0;
-    color: #333;
-    font-size: 14px;
-}
-
-.product-features ul {
-    margin: 0;
-    padding: 0 0 0 20px;
-    color: #666;
-    font-size: 13px;
-}
-
-.product-features li {
-    margin-bottom: 3px;
-}
-
-.product-price-container {
-    margin-top: auto;
-}
-
-.price-wrapper {
-    margin-bottom: 15px;
-}
-
-.original-price {
-    text-decoration: line-through;
-    color: #999;
-    font-size: 14px;
-    margin-right: 10px;
-}
-
-.final-price {
-    color: #28a745;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.final-price.no-discount {
-    color: #333;
-}
-
-.add-to-cart-btn {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-}
-
-.add-to-cart-btn:hover {
-    background-color: #0056b3;
-}
-
-/* استایل‌های شبکه‌های اجتماعی در هدر */
-.social-icons-header {
-    display: flex;
-    gap: 10px;
-    margin-left: auto;
-    margin-right: 20px;
-}
-
-.social-icon {
-    width: 30px;
-    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: white;
-    border-radius: 50%;
-    transition: transform 0.3s ease;
+    z-index: 10;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
 }
 
-.social-icon:hover {
+.carousel-arrow:hover {
+    background: white;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.carousel-arrow:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.arrow-left {
+    left: 0;
+}
+
+.arrow-right {
+    right: 0;
+}
+
+.carousel-arrow svg {
+    width: 24px;
+    height: 24px;
+    color: #333;
+}
+
+/* نقاط ناوبری */
+.carousel-dots-container {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+}
+
+.carousel-dot {
+    width: 50px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.4);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-dot:hover {
+    background: rgba(255, 255, 255, 0.6);
     transform: scale(1.1);
 }
 
-.social-icon img {
-    width: 18px;
-    height: 18px;
+.carousel-dot.active {
+    background: rgba(255, 255, 255, 0.8);
 }
 
-/* استایل‌های responsive */
+.carousel-dot.active .dot-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: white;
+    border-radius: 3px;
+    animation: dotProgress linear forwards;
+    animation-duration: var(--interval, 5s);
+}
+
+@keyframes dotProgress {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+/* شماره اسلاید */
+.slide-counter {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+}
+
+.current-slide {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.total-slides {
+    opacity: 0.7;
+}
+
+/* جایگزین برای زمانی که تصویری نیست */
+.no-image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 1200px) {
+    .carousel-container {
+        height: 500px;
+        padding: 0 60px;
+    }
+
+    .title-content h3 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 992px) {
+    .carousel-container {
+        height: 450px;
+        padding: 0 50px;
+        margin: 30px 0;
+    }
+
+    .carousel-arrow {
+        width: 50px;
+        height: 50px;
+    }
+
+    .carousel-arrow svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .carousel-title-overlay {
+        padding: 30px 20px 15px;
+    }
+}
+
 @media (max-width: 768px) {
     .carousel-container {
-        height: 300px;
+        height: 400px;
+        padding: 0 30px;
+        margin: 20px 0;
     }
 
-    .categories-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    .carousel-slides-wrapper {
+        border-radius: 15px;
     }
 
-    .products-grid.detailed {
-        grid-template-columns: 1fr;
+    .title-content h3 {
+        font-size: 20px;
     }
 
-    .section-header-top {
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
+    .carousel-arrow {
+        width: 45px;
+        height: 45px;
     }
 
-    .social-icons-header {
-        margin: 10px 0;
-        order: 3;
-        width: 100%;
-        justify-content: center;
+    .carousel-dot {
+        width: 40px;
+        height: 5px;
+    }
+
+    .slide-counter {
+        top: 15px;
+        right: 15px;
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .current-slide {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .carousel-container {
+        height: 350px;
+        padding: 0 20px;
+    }
+
+    .carousel-slides-wrapper {
+        border-radius: 12px;
+    }
+
+    .carousel-title-overlay {
+        padding: 20px 15px 10px;
+        opacity: 1;
+        transform: none;
+    }
+
+    .title-content h3 {
+        font-size: 18px;
+    }
+
+    .carousel-arrow {
+        width: 40px;
+        height: 40px;
+    }
+
+    .carousel-arrow svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .carousel-dots-container {
+        bottom: 15px;
+        gap: 8px;
+    }
+
+    .carousel-dot {
+        width: 30px;
+        height: 4px;
+    }
+}
+
+/* انیمیشن‌های اضافی برای اسلایدها */
+@keyframes fadeIn {
+    from {
+        opacity: 0.7;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.carousel-image {
+    animation: fadeIn 0.8s ease forwards;
+}
+
+/* افکت‌های hover اضافی */
+.carousel-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 80px;
+    right: 80px;
+    height: 100%;
+    background: linear-gradient(to bottom,
+            transparent 0%,
+            transparent 85%,
+            rgba(0, 0, 0, 0.1) 100%);
+    pointer-events: none;
+    z-index: 2;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.carousel-container:hover::before {
+    opacity: 1;
+}
+
+/* استایل‌های تم تاریک */
+@media (prefers-color-scheme: dark) {
+    .carousel-arrow {
+        background: rgba(40, 40, 40, 0.95);
+    }
+
+    .carousel-arrow svg {
+        color: white;
+    }
+
+    .carousel-arrow:hover {
+        background: rgba(60, 60, 60, 0.95);
+    }
+
+    .slide-counter {
+        background: rgba(255, 255, 255, 0.1);
     }
 }

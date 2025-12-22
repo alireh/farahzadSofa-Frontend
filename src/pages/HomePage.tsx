@@ -63,7 +63,7 @@ const HomePage: React.FC = () => {
 
   const fetchSocialLinks = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/api/social-links');
+      const response = await axios.get('http://localhost:5000/api/social-links');
       setSocialLinks(response.data);
     } catch (error) {
       console.error('Error fetching social links:', error);
@@ -318,14 +318,16 @@ const HomePage: React.FC = () => {
       </header>
 
       {/* بقیه کدها بدون تغییر */}
-      <section className="hero back-header">
-        <div className="hero-content header-title">
-          <h2>به فروشگاه ما خوش آمدید</h2>
-          <h1>گالری مبلمان</h1>
-          <p>محصولات منتخب ما را ببینید</p>
-          <button className="shop-btn">همین حالا بخرید</button>
-        </div>
-      </section>
+      {!data.settings?.show_carousel && (
+        <section className="hero back-header">
+          <div className="hero-content header-title">
+            <h2>به فروشگاه ما خوش آمدید</h2>
+            <h1>گالری مبلمان</h1>
+            <p>محصولات منتخب ما را ببینید</p>
+            <button className="shop-btn">همین حالا بخرید</button>
+          </div>
+        </section>
+      )}
 
       {/* <SimpleCarousel /> */}
       {renderHeroSection()}
