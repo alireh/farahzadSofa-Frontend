@@ -1,15 +1,18 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import "../styles/footer.css";
+import { SocialLink } from '../types';
 
 export interface FooterProps {
     /** عنوان دراپ‌دون */
     title: string;
+    socialData: SocialLink[];
     linkClick: (e: any, linkName: string) => void;
 }
 
 const Footer: React.FC<FooterProps> = ({
     title,
+    socialData,
     linkClick
 }) => {
 
@@ -123,7 +126,7 @@ const Footer: React.FC<FooterProps> = ({
 
                 {/* Social Icons */}
                 <div className="footer-social">
-                    <a href="#" aria-label="Telegram">
+                    {/* <a href="#" aria-label="Telegram">
                         <img src="/images/social-media/telegram.svg" alt="telegram"></img>
                     </a>
                     <a href="#" aria-label="Instagram">
@@ -140,7 +143,17 @@ const Footer: React.FC<FooterProps> = ({
                     </a>
                     <a href="#" aria-label="WhatsApp">
                         <img src="/images/social-media/whatsapp.png" alt="aparat"></img>
-                    </a>
+                    </a> */}
+
+                    {
+                        socialData.map((item) => (
+
+                            <a href="#" aria-label={`${item.platform}`}>
+                                <img src={`http://localhost:5000${item.icon}`} alt={`${item.platform}`}></img>
+                            </a>
+                        ))}
+
+
                 </div>
 
                 {/* Trust Badges */}

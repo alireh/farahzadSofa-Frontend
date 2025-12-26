@@ -36,6 +36,9 @@ export interface Image {
   url: string;
   title: string;
   type: string;
+  price: number,
+  off: number,
+  is_tooman: Boolean,
 }
 
 export interface Article {
@@ -70,12 +73,12 @@ export interface Product {
 }
 export interface SocialLink {
   id: number;
-  platform: string;
-  url: string;
-  icon: string;
-  is_active: boolean;
-  display_order: number;
-  created_at?: string;
+  platform: string; // نام نمایشی شبکه اجتماعی
+  url: string;      // آدرس URL کامل
+  icon: string | null; // مسیر تصویر آیکون (ممکن است null باشد)
+  is_active: boolean;  // وضعیت نمایش
+  display_order: number; // ترتیب نمایش
+  created_at?: string;   // تاریخ ایجاد
 }
 export interface SiteSettings {
   id: number;

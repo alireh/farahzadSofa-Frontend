@@ -6,6 +6,7 @@ import Footer from "../components/footer";
 import '../constant/pageSectionType'
 import SimpleCarousel from "../components/simpleCarousel";
 import SEOHead from "../SEOHead";
+import { toPersianDigits } from "../util/general";
 
 enum PageSectionType {
   Blog = "blog",
@@ -63,17 +64,64 @@ const HomePage: React.FC = () => {
 
   const fetchSocialLinks = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/social-links');
+      const response = await axios.get('/api/socials');
       setSocialLinks(response.data);
     } catch (error) {
       console.error('Error fetching social links:', error);
     }
   };
 
+  const renderSocialIcons = () => {
+    if (!data || !data.socialLinks || data.socialLinks.length === 0) {
+      return null;
+    }
+
+    return (
+      <div className="social-section">
+        <h3>ما را در شبکه‌های اجتماعی دنبال کنید</h3>
+        <div className="social-icons">
+          {data.socialLinks
+            .filter(link => link.is_active)
+            .sort((a, b) => a.display_order - b.display_order)
+            .map((link) => (
+              <a
+                key={link.id}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon"
+                title={link.platform}
+              >
+                {link.icon ? (
+                  <img
+                    src={`${link.icon}`}
+                    alt={link.platform}
+                    className="social-icon-img"
+                    onError={(e) => {
+                      // اگر تصویر لود نشد، نام پلتفرم را نمایش بده
+                      e.currentTarget.style.display = 'none';
+                      const span = document.createElement('span');
+                      span.textContent = link.platform.charAt(0);
+                      span.className = 'social-fallback-icon';
+                      e.currentTarget.parentElement?.appendChild(span);
+                    }}
+                  />
+                ) : (
+                  <span className="social-fallback-icon">
+                    {link.platform.charAt(0)}
+                  </span>
+                )}
+              </a>
+            ))}
+        </div>
+      </div>
+    );
+  };
+
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/categories");
+      const response = await axios.get("/api/categories");
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -83,7 +131,7 @@ const HomePage: React.FC = () => {
 
   const fetchCategoryProducts = async (categoryId: number) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/categories/${categoryId}/products`);
+      const response = await axios.get(`/api/categories/${categoryId}/products`);
       setCategoryProducts(response.data.products);
       setSelectedCategory(response.data);
       setShowAllProducts(true);
@@ -110,7 +158,7 @@ const HomePage: React.FC = () => {
 
   // const fetchSocialLinks = async () => {
   //   try {
-  //     const response = await axios.get("http://localhost:5000/api/social-links");
+  //     const response = await axios.get("/api/social-links");
   //     setSocialLinks(response.data);
   //   } catch (error) {
   //     console.error("Error fetching social links:", error);
@@ -151,7 +199,7 @@ const HomePage: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/data");
+      const response = await axios.get("/api/data");
       setData(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -162,7 +210,7 @@ const HomePage: React.FC = () => {
 
   const fetchArticles = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/articles");
+      const response = await axios.get("/api/articles");
       setArticles(response.data);
     } catch (error) {
       console.error("Error fetching articles:", error);
@@ -283,6 +331,16 @@ const HomePage: React.FC = () => {
     return icons[platform] || <span>{platform}</span>;
   };
 
+  const moreArticleClick = (articleId: any) => {
+    if (data.settings.article_display_mode == 'separate') {
+      window.open('/admin', '_blank')
+    } else {
+      setShowFullArticle(
+        showFullArticle === articleId ? null : articleId
+      )
+    }
+  }
+
   return (
     <div className="App" dir="rtl">
       {/* افزودن Head SEO */}
@@ -340,13 +398,16 @@ const HomePage: React.FC = () => {
             <div className="product-card" key={i}>
               <div className="product-image">
                 <img
-                  src={`http://localhost:5000${img.url}`}
+                  src={`${img.url}`}
                   alt="product"
                   style={{ width: "100%", height: "100%" }}
                 />
               </div>
-              <h3>مبل ۱/۷ (ثابت) ۶۰ چوب + ۶۰۰/۸۰۰</h3>
-              <p className="price">۶۵۰٫۹۹ تومان</p>
+              <h3>{img.title}</h3>
+              <p className={`price ${img.off !== 0 ? 'off-price' : ''}`}>{toPersianDigits(img.price)}{img.is_tooman ? ' تومان' : ' ریال'}</p>
+              {img.off !== 0 && (
+                <p className="price">{toPersianDigits(img.off)}{img.is_tooman ? ' تومان' : ' ریال'}</p>
+              )}
             </div>
           ))}
         </div>
@@ -377,7 +438,7 @@ const HomePage: React.FC = () => {
                 {category.image_url && (
                   <div className="category-image">
                     <img
-                      src={`http://localhost:5000${category.image_url}`}
+                      src={`${category.image_url}`}
                       alt={category.title}
                       loading="lazy"
                     />
@@ -432,7 +493,7 @@ const HomePage: React.FC = () => {
                 <div className="product-card detailed" key={product.id}>
                   <div className="product-image">
                     <img
-                      src={`http://localhost:5000${product.image_url}`}
+                      src={`${product.image_url}`}
                       alt={product.title}
                       style={{ width: "100%", height: "100%" }}
                     />
@@ -479,9 +540,9 @@ const HomePage: React.FC = () => {
                           </span>
                         )}
                       </div>
-                      <button className="add-to-cart-btn">
+                      {/* <button className="add-to-cart-btn">
                         افزودن به سبد خرید
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 </div>
@@ -492,14 +553,13 @@ const HomePage: React.FC = () => {
       )}
 
       {/* Featured Products (محصولات ویژه) */}
-      {!showAllProducts && (
+      {/* {!showAllProducts && (
         <section className="featured-products">
           <h2>محصولات ویژه</h2>
           <div className="products-grid">
-            {/* محصولات ویژه را اینجا نمایش دهید */}
           </div>
         </section>
-      )}
+      )} */}
 
       {/* Articles Section */}
       <section className="articles-section" ref={blogSectionRef}>
@@ -519,7 +579,7 @@ const HomePage: React.FC = () => {
                 {article.image_url && (
                   <div className="article-image">
                     <img
-                      src={`http://localhost:5000${article.image_url}`}
+                      src={`${article.image_url}`}
                       loading="lazy"
                       alt={`تصویر مقاله ${article.title}`}
                       title={article.title}
@@ -542,9 +602,7 @@ const HomePage: React.FC = () => {
                   </div>
                   <button
                     className="read-more-btn"
-                    onClick={() => setShowFullArticle(
-                      showFullArticle === article.id ? null : article.id
-                    )}
+                    onClick={() => moreArticleClick(article.id)}
                   >
                     {showFullArticle === article.id ? 'نمایش کمتر' : 'ادامه مطلب'}
                   </button>
@@ -584,8 +642,7 @@ const HomePage: React.FC = () => {
       <section className="contact-section" ref={contactUsSectionRef}>
         <h2>تماس با ما</h2>
         <p>
-          لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده
-          از طراحان گرافیک است
+          هفت روز هفته میتونید با ما در تماس باشید
         </p>
         <form className="contact-form">
           <input type="text" placeholder="نام شما" />
@@ -597,7 +654,9 @@ const HomePage: React.FC = () => {
 
       {/* Footer */}
       <section className="about-section" ref={aboutUsSectionRef}>
-        <Footer title="" linkClick={footerLinkClick} />
+        <Footer title=""
+          linkClick={footerLinkClick}
+          socialData={data.socialLinks} />
       </section>
 
       {/* <div className="social-icons-header">
@@ -638,9 +697,9 @@ const HomePage: React.FC = () => {
         </div>
       </div> */}
 
+      {/* {renderSocialIcons()} */}
 
-
-      <div className="social-section">
+      {/* <div className="social-section">
         <h3>ما را در شبکه‌های اجتماعی دنبال کنید</h3>
         <div className="social-icons">
           {socialLinks && Object.entries(socialLinks).map(([platform, url]) => (
@@ -653,10 +712,11 @@ const HomePage: React.FC = () => {
               title={platform}
             >
               {getSocialIcon(platform)}
+
             </a>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
