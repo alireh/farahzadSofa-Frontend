@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/protectedRoute';
+import ArticlePage from './pages/ArticlePage';
 
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/articles/:id" element={<ArticlePage />} />
 
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>

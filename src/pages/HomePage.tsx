@@ -333,7 +333,7 @@ const HomePage: React.FC = () => {
 
   const moreArticleClick = (articleId: any) => {
     if (data.settings.article_display_mode == 'separate') {
-      window.open('/admin', '_blank')
+      window.open(`/articles/${articleId}`, '_blank')
     } else {
       setShowFullArticle(
         showFullArticle === articleId ? null : articleId
