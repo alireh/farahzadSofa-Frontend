@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import axios from "axios";
 import "../styles/website.css";
-import Footer from "../components/footer";
 import '../constant/pageSectionType'
 import SEOHead from "../SEOHead";
-import { Article, SocialLink } from "../types";
+import { Article } from "../types";
 import '../styles/articlePage.css'
 
 const ArticlePage: React.FC = () => {

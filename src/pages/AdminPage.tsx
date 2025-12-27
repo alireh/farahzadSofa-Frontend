@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../api"; // instance با token خودکار
 import { Image, SiteData, SocialLink, Product, Category } from "../types";
-import Dropdown from "../components/dropdown";
 import { Navigate } from "react-router-dom";
-import SocialLinksManager from "../components/SocialLinksManager";
 import AdminSocialLinks from "../components/SocialLinksManager";
 import { toPersianDigits } from "../util/general";
 import Alert, { AlertType } from '../components/Alert';
