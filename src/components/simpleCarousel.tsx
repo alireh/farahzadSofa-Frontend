@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/simpleCarousel.css';
+import { Host_Url } from '../util/consatnt';
 
 interface CarouselProps {
     images: Array<{
@@ -97,7 +98,7 @@ const SimpleCarousel: React.FC<CarouselProps> = ({
             <div className="carousel-slides-wrapper">
                 <div className="carousel-slide">
                     <img
-                        src={`http://localhost:5000${images[currentIndex].url}`}
+                        src={`${Host_Url}${images[currentIndex].url}`}
                         alt={images[currentIndex].title}
                         className="carousel-image"
                         loading="lazy"
