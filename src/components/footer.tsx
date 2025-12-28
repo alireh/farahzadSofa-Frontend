@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import "../styles/footer.css";
 import { SocialLink } from '../types';
-import { Host_Url } from '../util/consatnt';
+const Host_Url = process.env.REACT_APP_HOST_URL;
 
 export interface FooterProps {
     /** عنوان دراپ‌دون */

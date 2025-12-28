@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/simpleCarousel.css';
-import { Host_Url } from '../util/consatnt';
+const Host_Url = process.env.REACT_APP_HOST_URL;
 
 interface CarouselProps {
     images: Array<{

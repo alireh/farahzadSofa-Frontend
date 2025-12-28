@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
-import { Host_Url } from "./util/consatnt";
+const Host_Url = process.env.REACT_APP_HOST_URL;
 
 const api = axios.create({
   baseURL: `${Host_Url}/api`,

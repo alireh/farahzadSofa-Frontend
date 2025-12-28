@@ -1,1 +1,0 @@
-export const Host_Url = "http://localhost:5000";

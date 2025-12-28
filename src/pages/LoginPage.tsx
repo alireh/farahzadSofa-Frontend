@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
-import { Host_Url } from "../util/consatnt";
+const Host_Url = process.env.REACT_APP_HOST_URL;
 
 function LoginPage() {
   const [email, setEmail] = useState("");

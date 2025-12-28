@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { SocialLink } from '../types';
-import { Host_Url } from '../util/consatnt';
+const Host_Url = process.env.REACT_APP_HOST_URL;
 
 interface SocialLinksManagerProps {
     onClose?: () => void;
