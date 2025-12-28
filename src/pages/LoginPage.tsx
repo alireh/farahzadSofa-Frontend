@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
+const Host_Url = process.env.REACT_APP_HOST_URL;
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -13,7 +14,7 @@ function LoginPage() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/admin/login", {
+      const res = await fetch(`${Host_Url}/api/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
