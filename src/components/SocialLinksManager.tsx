@@ -42,7 +42,7 @@ const SocialLinksManager: React.FC<SocialLinksManagerProps> = ({ onClose }) => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${Host_Url}/api/admin/socials`, {
+            const response = await axios.get(`${Host_Url}api/admin/socials`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setSocialLinks(response.data);
@@ -103,7 +103,7 @@ const SocialLinksManager: React.FC<SocialLinksManagerProps> = ({ onClose }) => {
             }
 
             const token = localStorage.getItem('token');
-            await axios.post(`${Host_Url}/api/admin/socials`, formData, {
+            await axios.post(`${Host_Url}api/admin/socials`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
@@ -135,7 +135,7 @@ const SocialLinksManager: React.FC<SocialLinksManagerProps> = ({ onClose }) => {
             }
 
             const token = localStorage.getItem('token');
-            await axios.put(`${Host_Url}/api/admin/socials/${id}`, formData, {
+            await axios.put(`${Host_Url}api/admin/socials/${id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
@@ -157,7 +157,7 @@ const SocialLinksManager: React.FC<SocialLinksManagerProps> = ({ onClose }) => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`${Host_Url}/api/admin/socials/${id}`, {
+            await axios.delete(`${Host_Url}api/admin/socials/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -177,7 +177,7 @@ const SocialLinksManager: React.FC<SocialLinksManagerProps> = ({ onClose }) => {
             formData.append('is_active', (!currentActive).toString());
 
             const token = localStorage.getItem('token');
-            await axios.put(`${Host_Url}/api/admin/socials/${id}`, formData, {
+            await axios.put(`${Host_Url}api/admin/socials/${id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
