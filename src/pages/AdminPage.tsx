@@ -120,7 +120,13 @@ const AdminPage: React.FC = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await api.get("/admin/categories");
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      };
+      const response = await api.get("/admin/categories", header);
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -129,7 +135,14 @@ const AdminPage: React.FC = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await api.get("/admin/products");
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      const response = await api.get("/admin/products", header);
       setProducts(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -151,7 +164,14 @@ const AdminPage: React.FC = () => {
 
   const fetchSocialLinks = async () => {
     try {
-      const response = await api.get(`${process.env.REACT_APP_HOST_URL}api/admin/socials`);
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      const response = await api.get(`${process.env.REACT_APP_HOST_URL}api/admin/socials`, header);
       setSocialLinks(response.data);
     } catch (error) {
       console.error("Error fetching social links:", error);
@@ -173,9 +193,14 @@ const AdminPage: React.FC = () => {
     }
 
     try {
-      await api.post("/admin/categories", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      await api.post("/admin/categories", formData, header);
       showAlert('success', "دسته‌بندی با موفقیت ایجاد شد");
       resetCategoryForm();
       fetchCategories();
@@ -202,9 +227,14 @@ const AdminPage: React.FC = () => {
     }
 
     try {
-      await api.put(`/admin/categories/${editingCategory}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      await api.put(`/admin/categories/${editingCategory}`, formData, header);
       showAlert('success', "دسته‌بندی با موفقیت ویرایش شد");
       resetCategoryForm();
       fetchCategories();
@@ -218,7 +248,14 @@ const AdminPage: React.FC = () => {
     if (!window.confirm("آیا از حذف این دسته‌بندی مطمئنید؟")) return;
 
     try {
-      await api.delete(`/admin/categories/${id}`);
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      await api.delete(`/admin/categories/${id}`, header);
       showAlert('error', "دسته‌بندی حذف شد");
       fetchCategories();
     } catch (error: any) {
@@ -262,9 +299,14 @@ const AdminPage: React.FC = () => {
     formData.append("image", productImage);
 
     try {
-      await api.post("/admin/products", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      await api.post("/admin/products", formData, header);
       showAlert('success', "محصول با موفقیت ایجاد شد");
       resetProductForm();
       fetchProducts();
@@ -291,9 +333,14 @@ const AdminPage: React.FC = () => {
     }
 
     try {
-      await api.put(`/admin/products/${editingProduct}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      await api.put(`/admin/products/${editingProduct}`, header);
       showAlert('success', "محصول با موفقیت ویرایش شد");
       resetProductForm();
       fetchProducts();
@@ -307,7 +354,14 @@ const AdminPage: React.FC = () => {
     if (!window.confirm("آیا از حذف این محصول مطمئنید؟")) return;
 
     try {
-      await api.delete(`/admin/products/${id}`);
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      await api.delete(`/admin/products/${id}`, header);
       showAlert('error', "محصول حذف شد");
       fetchProducts();
     } catch (error) {
@@ -356,9 +410,14 @@ const AdminPage: React.FC = () => {
     }
 
     try {
-      await api.post("/admin/carousel", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      await api.post("/admin/carousel", header);
       showAlert('error', "تصویر Carousel با موفقیت آپلود شد");
       setCarouselImageFile(null);
       setCarouselImageTitle("");
@@ -373,7 +432,14 @@ const AdminPage: React.FC = () => {
     if (!window.confirm("آیا از حذف این تصویر Carousel مطمئنید؟")) return;
 
     try {
-      await api.delete(`/admin/carousel/${id}`);
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      await api.delete(`/admin/carousel/${id}`, header);
       showAlert('error', "تصویر Carousel حذف شد");
       fetchSettings();
     } catch (error) {
@@ -385,11 +451,18 @@ const AdminPage: React.FC = () => {
   // توابع مدیریت تنظیمات
   const handleUpdateSettings = async () => {
     try {
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
       await api.put("/admin/site-settings", {
         show_carousel: showCarousel,
         max_carousel_items: maxCarouselItems,
         article_display_mode: articleDisplayMode,
-      });
+      }, header);
       showAlert('success', "تنظیمات با موفقیت به‌روزرسانی شد");
       fetchSettings();
     } catch (error) {
@@ -406,8 +479,19 @@ const AdminPage: React.FC = () => {
     }
 
     try {
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      };
+
       await api.put(`/admin/socials/${id}`, {
         url: socialLinkUrl,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
       showAlert('success', "لینک شبکه اجتماعی با موفقیت به‌روزرسانی شد");
       setEditingSocialLink(null);
@@ -421,9 +505,16 @@ const AdminPage: React.FC = () => {
 
   const handleToggleSocialLink = async (id: number, currentStatus: boolean) => {
     try {
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
       await api.put(`/admin/socials/${id}`, {
         is_active: !currentStatus,
-      });
+      }, header);
       fetchSocialLinks();
     } catch (error) {
       console.error("Error toggling social link:", error);
@@ -433,7 +524,14 @@ const AdminPage: React.FC = () => {
 
   const fetchAdminData = async () => {
     try {
-      const response = await api.get("/admin/data");
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      const response = await api.get("/admin/data", header);
       setData(response.data);
       setAboutText(response.data.about);
       setAddressText(response.data.address);
@@ -449,7 +547,14 @@ const AdminPage: React.FC = () => {
 
   const fetchArticles = async () => {
     try {
-      const response = await api.get("/admin/articles");
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      const response = await api.get("/admin/articles", header);
       setArticles(response.data);
     } catch (error) {
       console.error("Error fetching articles:", error);
@@ -484,9 +589,14 @@ const AdminPage: React.FC = () => {
     if (imageTitle) formData.append("title", imageTitle);
 
     try {
-      await api.post("/admin/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      await api.post("/admin/upload", header);
       showAlert('success', "تصویر با موفقیت آپلود شد");
       setSelectedFile(null);
       setImageTitle("");
@@ -501,7 +611,14 @@ const AdminPage: React.FC = () => {
     if (!window.confirm("آیا از حذف این تصویر مطمئنید؟")) return;
 
     try {
-      await api.delete(`/admin/image/${id}`);
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      await api.delete(`/admin/image/${id}`, header);
       showAlert('success', "تصویر حذف شد");
       fetchAdminData();
     } catch (error) {
@@ -512,12 +629,19 @@ const AdminPage: React.FC = () => {
 
   const handleUpdateContent = async () => {
     try {
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
       await api.put("/admin/update-content", {
         about: aboutText,
         address: addressText,
         email: emailText,
         phone: phoneText,
-      });
+      }, header);
       showAlert('success', "اطلاعات با موفقیت به‌روزرسانی شد");
       fetchAdminData();
     } catch (error: any) {
@@ -554,9 +678,14 @@ const AdminPage: React.FC = () => {
     }
 
     try {
-      await api.post("/admin/articles", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      await api.post("/admin/articles", header);
       showAlert('success', "مقاله با موفقیت ایجاد شد");
       resetArticleForm();
       fetchArticles();
@@ -583,9 +712,14 @@ const AdminPage: React.FC = () => {
     }
 
     try {
-      await api.put(`/admin/articles/${editingArticle}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const token = localStorage.getItem('token');
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        },
+      };
+      await api.put(`/admin/articles/${editingArticle}`, header);
       showAlert('success', "مقاله با موفقیت ویرایش شد");
       resetArticleForm();
       fetchArticles();
@@ -608,7 +742,13 @@ const AdminPage: React.FC = () => {
 
     if (isConfirmed) {
       try {
-        await api.delete(`/admin/articles/${id}`);
+        const token = localStorage.getItem('token');
+        const header = {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        };
+        await api.delete(`/admin/articles/${id}`, header);
         showAlert('error', "مقاله حذف شد");
         fetchArticles();
       } catch (error) {
