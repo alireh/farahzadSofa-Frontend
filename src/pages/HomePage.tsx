@@ -64,7 +64,7 @@ const HomePage: React.FC = () => {
 
   const fetchSocialLinks = async () => {
     try {
-      const response = await axios.get('/api/socials');
+      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}api/socials`);
       setSocialLinks(response.data);
     } catch (error) {
       console.error('Error fetching social links:', error);
@@ -121,7 +121,7 @@ const HomePage: React.FC = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("/api/categories");
+      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/api/categories`);
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -131,7 +131,7 @@ const HomePage: React.FC = () => {
 
   const fetchCategoryProducts = async (categoryId: number) => {
     try {
-      const response = await axios.get(`/api/categories/${categoryId}/products`);
+      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/api/categories/${categoryId}/products`);
       setCategoryProducts(response.data.products);
       setSelectedCategory(response.data);
       setShowAllProducts(true);
@@ -158,7 +158,7 @@ const HomePage: React.FC = () => {
 
   // const fetchSocialLinks = async () => {
   //   try {
-  //     const response = await axios.get("/api/social-links");
+  //     const response = await axios.get(`${process.env.REACT_APP_HOST_URL}api/social-links");
   //     setSocialLinks(response.data);
   //   } catch (error) {
   //     console.error("Error fetching social links:", error);
@@ -199,7 +199,7 @@ const HomePage: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("/api/data");
+      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}api/data`);
       setData(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -210,7 +210,7 @@ const HomePage: React.FC = () => {
 
   const fetchArticles = async () => {
     try {
-      const response = await axios.get("/api/articles");
+      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/api/articles`);
       setArticles(response.data);
     } catch (error) {
       console.error("Error fetching articles:", error);

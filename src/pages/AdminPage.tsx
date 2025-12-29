@@ -151,7 +151,7 @@ const AdminPage: React.FC = () => {
 
   const fetchSocialLinks = async () => {
     try {
-      const response = await api.get("/api/admin/socials");
+      const response = await api.get(`${process.env.REACT_APP_HOST_URL}/api/admin/socials`);
       setSocialLinks(response.data);
     } catch (error) {
       console.error("Error fetching social links:", error);
