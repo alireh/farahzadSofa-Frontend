@@ -7,6 +7,7 @@ import { toPersianDigits } from "../util/general";
 import Alert, { AlertType } from '../components/Alert';
 import { useConfirm } from '../hooks/useConfirm';
 import ConfirmDialog from "../components/confirmDialog";
+const Host_Url = process.env.REACT_APP_HOST_URL;
 
 interface AlertState {
   show: boolean;
@@ -1016,7 +1017,7 @@ const AdminPage: React.FC = () => {
           <div style={styles.imageList}>
             {data.images.map((img) => (
               <div key={img.id} style={styles.imageItem}>
-                <img src={`${img.url}`} alt={img.title} style={styles.adminImage} />
+                <img src={`${Host_Url}${img.url.slice(1)}`} alt={img.title} style={styles.adminImage} />
                 <p>{img.title}</p>
                 <p>قیمت : {toPersianDigits(img.price)}</p>
                 <p>قیمت تخفیف : {toPersianDigits(img.off)}</p>
