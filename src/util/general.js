@@ -3,3 +3,12 @@ export function toPersianDigits(text) {
 
     return text.toString().replace(/\d/g, (digit) => persianDigits[digit]);
 }
+
+export function getImgUrl(hostUrl, url) {
+    debugger
+    let path = hostUrl.toString();
+    path = path.endsWith('/') ? path : `${path}/`;
+    let imgPath = url;
+    imgPath = imgPath.startsWith('/') ? imgPath : `/${imgPath}`;
+    return `${hostUrl}${url}`;
+}

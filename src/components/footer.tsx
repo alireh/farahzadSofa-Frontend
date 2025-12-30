@@ -2,6 +2,7 @@
 import React from 'react';
 import "../styles/footer.css";
 import { SocialLink } from '../types';
+import { getImgUrl } from '../util/general';
 const Host_Url = process.env.REACT_APP_HOST_URL;
 
 export interface FooterProps {
@@ -36,30 +37,12 @@ const Footer: React.FC<FooterProps> = ({
 
                 {/* Social Icons */}
                 <div className="footer-social">
-                    {/* <a href="#" aria-label="Telegram">
-                        <img src="/images/social-media/telegram.svg" alt="telegram"></img>
-                    </a>
-                    <a href="#" aria-label="Instagram">
-                        <img src="/images/social-media/instagram.svg" alt="instagram"></img>
-                    </a>
-                    <a href="#" aria-label="YouTube">
-                        <img src="/images/social-media/youtube.svg" alt="youtube"></img>
-                    </a>
-                    <a href="#" aria-label="Aparat">
-                        <img src="/images/social-media/aparat.png" alt="aparat"></img>
-                    </a>
-                    <a href="#" aria-label="Pinterest">
-                        <img src="/images/social-media/pinterest.svg" alt="pinterest"></img>
-                    </a>
-                    <a href="#" aria-label="WhatsApp">
-                        <img src="/images/social-media/whatsapp.png" alt="aparat"></img>
-                    </a> */}
 
                     {
                         socialData.map((item) => (
 
                             <a href="#" aria-label={`${item.platform}`}>
-                                <img src={`${Host_Url}${item.icon}`} alt={`${item.platform}`}></img>
+                                <img src={`${getImgUrl(Host_Url, item.icon)}`} alt={`${item.platform}`}></img>
                             </a>
                         ))}
 

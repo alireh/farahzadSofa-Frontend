@@ -18,7 +18,7 @@ const ArticlePage: React.FC = () => {
 
     const fetchArticle = async (id: string) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_HOST_URL}api/articles/${id}`);
+            const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/api/articles/${id}`);
             setArticle(response.data);
         } catch (error) {
             console.error("Error fetching category products:", error);

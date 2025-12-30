@@ -6,7 +6,8 @@ import Footer from "../components/footer";
 import '../constant/pageSectionType'
 import SimpleCarousel from "../components/simpleCarousel";
 import SEOHead from "../SEOHead";
-import { toPersianDigits } from "../util/general";
+import { getImgUrl, toPersianDigits } from "../util/general";
+const Host_Url = process.env.REACT_APP_HOST_URL;
 
 enum PageSectionType {
   Blog = "blog",
@@ -64,7 +65,7 @@ const HomePage: React.FC = () => {
 
   const fetchSocialLinks = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}api/socials`);
+      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/api/socials`);
       setSocialLinks(response.data);
     } catch (error) {
       console.error('Error fetching social links:', error);
@@ -94,7 +95,7 @@ const HomePage: React.FC = () => {
               >
                 {link.icon ? (
                   <img
-                    src={`${link.icon}`}
+                    src={`${getImgUrl(Host_Url, link.icon)}`}
                     alt={link.platform}
                     className="social-icon-img"
                     onError={(e) => {
@@ -121,7 +122,7 @@ const HomePage: React.FC = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}api/categories`);
+      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/api/categories`);
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -131,7 +132,7 @@ const HomePage: React.FC = () => {
 
   const fetchCategoryProducts = async (categoryId: number) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}api/categories/${categoryId}/products`);
+      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/api/categories/${categoryId}/products`);
       setCategoryProducts(response.data.products);
       setSelectedCategory(response.data);
       setShowAllProducts(true);
@@ -158,7 +159,7 @@ const HomePage: React.FC = () => {
 
   // const fetchSocialLinks = async () => {
   //   try {
-  //     const response = await axios.get(`${process.env.REACT_APP_HOST_URL}api/social-links");
+  //     const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/api/social-links");
   //     setSocialLinks(response.data);
   //   } catch (error) {
   //     console.error("Error fetching social links:", error);
@@ -199,7 +200,7 @@ const HomePage: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const url = `${process.env.REACT_APP_HOST_URL}api/data`;
+      const url = `${process.env.REACT_APP_HOST_URL}/api/data`;
       const response = await axios.get(url);
       setData(response.data);
     } catch (error) {
@@ -211,7 +212,7 @@ const HomePage: React.FC = () => {
 
   const fetchArticles = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}api/articles`);
+      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/api/articles`);
       setArticles(response.data);
     } catch (error) {
       console.error("Error fetching articles:", error);
@@ -399,7 +400,7 @@ const HomePage: React.FC = () => {
             <div className="product-card" key={i}>
               <div className="product-image">
                 <img
-                  src={`${img.url}`}
+                  src={`${getImgUrl(Host_Url, img.url)}`}
                   alt="product"
                   style={{ width: "100%", height: "100%" }}
                 />
@@ -439,7 +440,7 @@ const HomePage: React.FC = () => {
                 {category.image_url && (
                   <div className="category-image">
                     <img
-                      src={`${category.image_url}`}
+                      src={`${getImgUrl(Host_Url, category.image_url)}`}
                       alt={category.title}
                       loading="lazy"
                     />
@@ -494,7 +495,7 @@ const HomePage: React.FC = () => {
                 <div className="product-card detailed" key={product.id}>
                   <div className="product-image">
                     <img
-                      src={`${product.image_url}`}
+                      src={`${getImgUrl(Host_Url, product.image_url)}`}
                       alt={product.title}
                       style={{ width: "100%", height: "100%" }}
                     />
@@ -580,7 +581,7 @@ const HomePage: React.FC = () => {
                 {article.image_url && (
                   <div className="article-image">
                     <img
-                      src={`${article.image_url}`}
+                      src={`${getImgUrl(Host_Url, article.image_url)}`}
                       loading="lazy"
                       alt={`تصویر مقاله ${article.title}`}
                       title={article.title}
