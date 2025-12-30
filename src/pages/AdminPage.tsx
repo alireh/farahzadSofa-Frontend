@@ -139,8 +139,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       const response = await api.get("/admin/products", header);
@@ -168,8 +167,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       const response = await api.get(`${process.env.REACT_APP_HOST_URL}api/admin/socials`, header);
@@ -197,8 +195,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       await api.post("/admin/categories", formData, header);
@@ -231,8 +228,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       await api.put(`/admin/categories/${editingCategory}`, formData, header);
@@ -252,8 +248,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       await api.delete(`/admin/categories/${id}`, header);
@@ -303,8 +298,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       await api.post("/admin/products", formData, header);
@@ -337,11 +331,10 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
-      await api.put(`/admin/products/${editingProduct}`, header);
+      await api.put(`/admin/products/${editingProduct}`, formData, header);
       showAlert('success', "محصول با موفقیت ویرایش شد");
       resetProductForm();
       fetchProducts();
@@ -358,8 +351,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       await api.delete(`/admin/products/${id}`, header);
@@ -414,11 +406,10 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
-      await api.post("/admin/carousel", header);
+      await api.post("/admin/carousel", formData, header);
       showAlert('error', "تصویر Carousel با موفقیت آپلود شد");
       setCarouselImageFile(null);
       setCarouselImageTitle("");
@@ -436,8 +427,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       await api.delete(`/admin/carousel/${id}`, header);
@@ -455,8 +445,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       await api.put("/admin/site-settings", {
@@ -509,8 +498,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       await api.put(`/admin/socials/${id}`, {
@@ -528,8 +516,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       const response = await api.get("/admin/data", header);
@@ -551,8 +538,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       const response = await api.get("/admin/articles", header);
@@ -593,11 +579,10 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
-      await api.post("/admin/upload", header);
+      await api.post("/admin/upload", formData, header);
       showAlert('success', "تصویر با موفقیت آپلود شد");
       setSelectedFile(null);
       setImageTitle("");
@@ -615,8 +600,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       await api.delete(`/admin/image/${id}`, header);
@@ -633,8 +617,7 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
       await api.put("/admin/update-content", {
@@ -682,11 +665,10 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
-      await api.post("/admin/articles", header);
+      await api.post("/admin/articles", formData, header);
       showAlert('success', "مقاله با موفقیت ایجاد شد");
       resetArticleForm();
       fetchArticles();
@@ -716,11 +698,10 @@ const AdminPage: React.FC = () => {
       const token = localStorage.getItem('token');
       const header = {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}`
         },
       };
-      await api.put(`/admin/articles/${editingArticle}`, header);
+      await api.put(`/admin/articles/${editingArticle}`, formData, header);
       showAlert('success', "مقاله با موفقیت ویرایش شد");
       resetArticleForm();
       fetchArticles();
