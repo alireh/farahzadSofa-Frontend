@@ -7,13 +7,19 @@ const Host_Url = process.env.REACT_APP_HOST_URL;
 
 export interface FooterProps {
     /** عنوان دراپ‌دون */
-    title: string;
+    phone: string;
+    about: string;
+    address: string;
+    email: string;
     socialData: SocialLink[];
     linkClick: (e: any, linkName: string) => void;
 }
 
 const Footer: React.FC<FooterProps> = ({
-    title,
+    phone,
+    about,
+    address,
+    email,
     socialData,
     linkClick
 }) => {
@@ -23,9 +29,31 @@ const Footer: React.FC<FooterProps> = ({
     };
 
     return (
-
         <footer className="site-footer">
             <div className="footer-top">
+
+                {/* About */}
+                <div className="footer-about">
+                    <p className="footer-description">
+                        {about}
+                    </p>
+
+                    <div className="footer-contact">
+                        <p>
+                            📧 ایمیل:
+                            <a href="mailto:info@farahzadmobl.com"> {email}</a>
+                        </p>
+                        <p>
+                            ☎️ تلفن:
+                            <a href="tel:02112345678"> {phone}</a>
+                        </p>
+                        <p>
+                            نشانی :
+                            <a href="tel:02112345678"> {address}</a>
+                        </p>
+                    </div>
+                </div>
+
                 {/* Links */}
                 <div className="footer-links">
                     <a onClick={(e) => handleLinkClick(e, 'home')} href="/">خانه</a>
@@ -37,7 +65,6 @@ const Footer: React.FC<FooterProps> = ({
 
                 {/* Social Icons */}
                 <div className="footer-social">
-
                     {
                         socialData.map((item) => (
 
@@ -45,8 +72,6 @@ const Footer: React.FC<FooterProps> = ({
                                 <img src={`${getImgUrl(Host_Url, item.icon)}`} alt={`${item.platform}`}></img>
                             </a>
                         ))}
-
-
                 </div>
 
                 {/* Trust Badges */}
@@ -55,9 +80,10 @@ const Footer: React.FC<FooterProps> = ({
                         <img src="/images/enamad.png" alt="اینماد" />
                     </a>
                     <a href="#" target="_blank" rel="noreferrer">
-                        <img src="/images/senfi.png" alt="نماد باد ما" />
+                        <img src="/images/senfi.png" alt="نماد صنفی" />
                     </a>
                 </div>
+
             </div>
 
             <div className="footer-bottom">
@@ -68,6 +94,7 @@ const Footer: React.FC<FooterProps> = ({
                 </p>
             </div>
         </footer>
+
 
     );
 };

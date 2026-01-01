@@ -7,6 +7,7 @@ import { getImgUrl, toPersianDigits } from "../util/general";
 import Alert, { AlertType } from '../components/Alert';
 import { useConfirm } from '../hooks/useConfirm';
 import ConfirmDialog from "../components/confirmDialog";
+import AdminMessages from "./AdminMessages";
 const Host_Url = process.env.REACT_APP_HOST_URL;
 
 interface AlertState {
@@ -130,6 +131,9 @@ const AdminPage: React.FC = () => {
       const response = await api.get("/admin/categories", header);
       setCategories(response.data);
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error fetching categories:", error);
     }
   };
@@ -145,6 +149,9 @@ const AdminPage: React.FC = () => {
       const response = await api.get("/admin/products", header);
       setProducts(response.data);
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error fetching products:", error);
     }
   };
@@ -173,6 +180,9 @@ const AdminPage: React.FC = () => {
       const response = await api.get(`${process.env.REACT_APP_HOST_URL}/api/admin/socials`, header);
       setSocialLinks(response.data);
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error fetching social links:", error);
     }
   };
@@ -203,10 +213,24 @@ const AdminPage: React.FC = () => {
       resetCategoryForm();
       fetchCategories();
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error creating category:", error);
       showAlert('error', "خطا در ایجاد دسته‌بندی");
     }
   };
+
+  const checkSessionTimeout = (error: any) => {
+    if (error.status == 401) {
+      showAlert('error', 'زمان نشست شما منقضی شده است دوباره وارد شوید');
+      setTimeout(() => {
+        window.location.href = '/login'
+      }, 3000);
+      return true;
+    }
+    return false;
+  }
 
   const handleUpdateCategory = async () => {
     if (!editingCategory || !categoryTitle.trim()) {
@@ -236,27 +260,41 @@ const AdminPage: React.FC = () => {
       resetCategoryForm();
       fetchCategories();
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error updating category:", error);
       showAlert('error', "خطا در ویرایش دسته‌بندی");
     }
   };
 
   const handleDeleteCategory = async (id: number) => {
-    if (!window.confirm("آیا از حذف این دسته‌بندی مطمئنید؟")) return;
+    const isConfirmed = await showConfirm({
+      title: 'حذف دسته‌بندی',
+      message: "آیا از حذف این دسته‌بندی مطمئنید؟",
+      confirmText: 'بله، حذف شود',
+      cancelText: 'انصراف',
+      type: 'danger'
+    });
 
-    try {
-      const token = localStorage.getItem('token');
-      const header = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-      };
-      await api.delete(`/admin/categories/${id}`, header);
-      showAlert('error', "دسته‌بندی حذف شد");
-      fetchCategories();
-    } catch (error: any) {
-      console.error("Error deleting category:", error);
-      showAlert('error', error.response?.data?.error || "خطا در حذف دسته‌بندی");
+    if (isConfirmed) {
+      try {
+        const token = localStorage.getItem('token');
+        const header = {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        };
+        await api.delete(`/admin/categories/${id}`, header);
+        showAlert('success', "دسته‌بندی حذف شد");
+        fetchCategories();
+      } catch (error: any) {
+        if (checkSessionTimeout(error)) {
+          return;
+        }
+        console.error("Error deleting category:", error);
+        showAlert('error', error.response?.data?.error || "خطا در حذف دسته‌بندی");
+      }
     }
   };
 
@@ -306,6 +344,9 @@ const AdminPage: React.FC = () => {
       resetProductForm();
       fetchProducts();
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error creating product:", error);
       showAlert('error', "خطا در ایجاد محصول");
     }
@@ -339,27 +380,41 @@ const AdminPage: React.FC = () => {
       resetProductForm();
       fetchProducts();
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error updating product:", error);
       showAlert('error', "خطا در ویرایش محصول");
     }
   };
 
   const handleDeleteProduct = async (id: number) => {
-    if (!window.confirm("آیا از حذف این محصول مطمئنید؟")) return;
+    const isConfirmed = await showConfirm({
+      title: 'حذف محصول',
+      message: "آیا از حذف این محصول مطمئنید؟",
+      confirmText: 'بله، حذف شود',
+      cancelText: 'انصراف',
+      type: 'danger'
+    });
 
-    try {
-      const token = localStorage.getItem('token');
-      const header = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-      };
-      await api.delete(`/admin/products/${id}`, header);
-      showAlert('error', "محصول حذف شد");
-      fetchProducts();
-    } catch (error) {
-      console.error("Error deleting product:", error);
-      showAlert('error', "خطا در حذف محصول");
+    if (isConfirmed) {
+      try {
+        const token = localStorage.getItem('token');
+        const header = {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        };
+        await api.delete(`/admin/products/${id}`, header);
+        showAlert('success', "محصول حذف شد");
+        fetchProducts();
+      } catch (error) {
+        if (checkSessionTimeout(error)) {
+          return;
+        }
+        console.error("Error deleting product:", error);
+        showAlert('error', "خطا در حذف محصول");
+      }
     }
   };
 
@@ -410,32 +465,46 @@ const AdminPage: React.FC = () => {
         },
       };
       await api.post("/admin/carousel", formData, header);
-      showAlert('error', "تصویر Carousel با موفقیت آپلود شد");
+      showAlert('success', "تصویر اسلاید با موفقیت آپلود شد");
       setCarouselImageFile(null);
       setCarouselImageTitle("");
       fetchSettings();
     } catch (error: any) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error uploading carousel image:", error);
       showAlert('error', error.response?.data?.error || "خطا در آپلود تصویر");
     }
   };
 
   const handleDeleteCarouselImage = async (id: number) => {
-    if (!window.confirm("آیا از حذف این تصویر Carousel مطمئنید؟")) return;
+    const isConfirmed = await showConfirm({
+      title: 'حذف اسلاید',
+      message: "آیا از حذف این اسلاید مطمئنید؟",
+      confirmText: 'بله، حذف شود',
+      cancelText: 'انصراف',
+      type: 'danger'
+    });
 
-    try {
-      const token = localStorage.getItem('token');
-      const header = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-      };
-      await api.delete(`/admin/carousel/${id}`, header);
-      showAlert('error', "تصویر Carousel حذف شد");
-      fetchSettings();
-    } catch (error) {
-      console.error("Error deleting carousel image:", error);
-      showAlert('error', "خطا در حذف تصویر");
+    if (isConfirmed) {
+      try {
+        const token = localStorage.getItem('token');
+        const header = {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        };
+        await api.delete(`/admin/carousel/${id}`, header);
+        showAlert('success', "تصویر Carousel حذف شد");
+        fetchSettings();
+      } catch (error) {
+        if (checkSessionTimeout(error)) {
+          return;
+        }
+        console.error("Error deleting carousel image:", error);
+        showAlert('error', "خطا در حذف تصویر");
+      }
     }
   };
 
@@ -456,6 +525,9 @@ const AdminPage: React.FC = () => {
       showAlert('success', "تنظیمات با موفقیت به‌روزرسانی شد");
       fetchSettings();
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error updating settings:", error);
       showAlert('error', "خطا در به‌روزرسانی تنظیمات");
     }
@@ -488,6 +560,9 @@ const AdminPage: React.FC = () => {
       setSocialLinkUrl("");
       fetchSocialLinks();
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error updating social link:", error);
       showAlert('error', "خطا در به‌روزرسانی لینک");
     }
@@ -506,6 +581,9 @@ const AdminPage: React.FC = () => {
       }, header);
       fetchSocialLinks();
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error toggling social link:", error);
     }
   };
@@ -526,6 +604,9 @@ const AdminPage: React.FC = () => {
       setEmailText(response.data.email);
       setPhoneText(response.data.phone);
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error fetching admin data:", error);
       showAlert('error', "لطفا ابتدا وارد شوید");
     } finally {
@@ -544,6 +625,9 @@ const AdminPage: React.FC = () => {
       const response = await api.get("/admin/articles", header);
       setArticles(response.data);
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error fetching articles:", error);
     }
   };
@@ -588,27 +672,42 @@ const AdminPage: React.FC = () => {
       setImageTitle("");
       fetchAdminData();
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error uploading image:", error);
       showAlert('error', "خطا در آپلود تصویر");
     }
   };
 
   const handleDeleteImage = async (id: number) => {
-    if (!window.confirm("آیا از حذف این تصویر مطمئنید؟")) return;
 
-    try {
-      const token = localStorage.getItem('token');
-      const header = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-      };
-      await api.delete(`/admin/image/${id}`, header);
-      showAlert('success', "تصویر حذف شد");
-      fetchAdminData();
-    } catch (error) {
-      console.error("Error deleting image:", error);
-      showAlert('error', "خطا در حذف تصویر");
+    const isConfirmed = await showConfirm({
+      title: 'حذف تصویر',
+      message: "آیا از حذف این تصویر مطمئنید؟",
+      confirmText: 'بله، حذف شود',
+      cancelText: 'انصراف',
+      type: 'danger'
+    });
+
+    if (isConfirmed) {
+      try {
+        const token = localStorage.getItem('token');
+        const header = {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        };
+        await api.delete(`/admin/image/${id}`, header);
+        showAlert('success', "تصویر حذف شد");
+        fetchAdminData();
+      } catch (error) {
+        if (checkSessionTimeout(error)) {
+          return;
+        }
+        console.error("Error deleting image:", error);
+        showAlert('error', "خطا در حذف تصویر");
+      }
     }
   };
 
@@ -628,24 +727,14 @@ const AdminPage: React.FC = () => {
       }, header);
       showAlert('success', "اطلاعات با موفقیت به‌روزرسانی شد");
       fetchAdminData();
-    } catch (error: any) {
-      if (redirectTologinIfSessionTimeout(error)) {
+    } catch (error) {
+      if (checkSessionTimeout(error)) {
         return;
       }
       console.error("Error updating content:", error);
       showAlert('error', "خطا در به‌روزرسانی محتوا");
     }
   };
-
-  const redirectTologinIfSessionTimeout = (error: any) => {
-    debugger
-    if (error.response.status == 401) {
-      showAlert('error', 'زمان نشست شما منقضی شده است دوباره وارد شوید');
-      // window.location.href = '/login';
-      return true;
-    }
-    return false;
-  }
 
   // ========== توابع مدیریت مقالات ==========
   const handleCreateArticle = async () => {
@@ -673,6 +762,9 @@ const AdminPage: React.FC = () => {
       resetArticleForm();
       fetchArticles();
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error creating article:", error);
       showAlert('error', "خطا در ایجاد مقاله");
     }
@@ -706,14 +798,15 @@ const AdminPage: React.FC = () => {
       resetArticleForm();
       fetchArticles();
     } catch (error) {
+      if (checkSessionTimeout(error)) {
+        return;
+      }
       console.error("Error updating article:", error);
       showAlert('error', "خطا در ویرایش مقاله");
     }
   };
 
   const handleDeleteArticle = async (id: number) => {
-    // if (!window.confirm("آیا از حذف این مقاله مطمئنید؟")) return;
-
     const isConfirmed = await showConfirm({
       title: 'حذف مقاله',
       message: "آیا از حذف این مقاله مطمئنید؟",
@@ -731,9 +824,12 @@ const AdminPage: React.FC = () => {
           },
         };
         await api.delete(`/admin/articles/${id}`, header);
-        showAlert('error', "مقاله حذف شد");
+        showAlert('success', "مقاله حذف شد");
         fetchArticles();
       } catch (error) {
+        if (checkSessionTimeout(error)) {
+          return;
+        }
         console.error("Error deleting article:", error);
         showAlert('error', "خطا در حذف مقاله");
       }
@@ -812,7 +908,7 @@ const AdminPage: React.FC = () => {
       <header style={styles.header}>
         {/* لینک Logout در سمت چپ */}
         {isLoggedIn && (
-          <div className="logout-container۱">
+          <div className="logout-container">
             <a href="#" onClick={handleLogout} className="logout-link">
               خروج
             </a>
@@ -860,7 +956,7 @@ const AdminPage: React.FC = () => {
                   انتخاب تصویر مقاله:
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/png"
                     onChange={handleArticleImageChange}
                     style={styles.fileInput}
                   />
@@ -966,9 +1062,9 @@ const AdminPage: React.FC = () => {
 
         {/* آپلود تصویر */}
         <section style={styles.section}>
-          <h2>آپلود تصویر محصول ویژه جدید</h2>
+          <h2>آپلود تصویر گالری جدید</h2>
           <div style={styles.uploadForm}>
-            <input type="file" accept="image/*" onChange={handleFileChange} style={styles.fileInput} />
+            <input type="file" accept="image/jpeg,image/png" onChange={handleFileChange} style={styles.fileInput} />
             <input type="text" placeholder="عنوان محصول" value={imageTitle} onChange={(e) => setImageTitle(e.target.value)} style={styles.textInput} />
             <input type="text" placeholder="قیمت" value={imgPrice} onChange={(e) => setImgPrice(parseInt(e.target.value))} style={styles.textInput} />
             <input type="text" placeholder="قیمت تخفیف" value={imgOffPrice} onChange={(e) => setImgOffPrice(parseInt(e.target.value))} style={styles.textInput} />
@@ -994,7 +1090,7 @@ const AdminPage: React.FC = () => {
 
         {/* مدیریت تصاویر */}
         <section style={styles.section}>
-          <h2>تصاویر محصولات ویژه موجود</h2>
+          <h2>تصاویر گالری موجود</h2>
           <div style={styles.imageList}>
             {data.images.map((img) => (
               <div key={img.id} style={styles.imageItem}>
@@ -1044,7 +1140,7 @@ const AdminPage: React.FC = () => {
       <div style={styles.sectionsContainer}>
         {/* مدیریت Carousel و تنظیمات */}
         <section style={styles.section}>
-          <h2>تنظیمات Carousel</h2>
+          <h2>تنظیمات اسلاید</h2>
           <div style={styles.settingsForm}>
             <label style={styles.checkboxLabel}>
               <input
@@ -1052,11 +1148,11 @@ const AdminPage: React.FC = () => {
                 checked={showCarousel}
                 onChange={(e) => setShowCarousel(e.target.checked)}
               />
-              نمایش Carousel
+              نمایش اسلاید
             </label>
 
             <div style={styles.formGroup}>
-              <label>حداکثر تعداد تصاویر Carousel:</label>
+              <label>حداکثر تعداد تصاویر اسلاید:</label>
               <input
                 type="number"
                 min="1"
@@ -1087,11 +1183,11 @@ const AdminPage: React.FC = () => {
           {/* آپلود تصویر Carousel */}
           {showCarousel && (
             <div style={styles.carouselUpload}>
-              <h3>آپلود تصویر Carousel</h3>
+              <h3>آپلود تصویر اسلاید</h3>
               <div style={styles.uploadForm}>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png"
                   onChange={(e) => setCarouselImageFile(e.target.files?.[0] || null)}
                   style={styles.fileInput}
                 />
@@ -1109,7 +1205,7 @@ const AdminPage: React.FC = () => {
                 >
                   {carouselImages.length >= maxCarouselItems
                     ? `حداکثر ${maxCarouselItems} تصویر مجاز است`
-                    : 'آپلود تصویر Carousel'}
+                    : 'آپلود تصویر اسلاید'}
                 </button>
               </div>
 
@@ -1117,7 +1213,7 @@ const AdminPage: React.FC = () => {
               <div style={styles.carouselList}>
                 <h4>تصاویر Carousel ({carouselImages.length}/{maxCarouselItems})</h4>
                 {carouselImages.length === 0 ? (
-                  <p style={styles.noData}>هیچ تصویری برای Carousel وجود ندارد</p>
+                  <p style={styles.noData}>هیچ تصویری برای اسلاید وجود ندارد</p>
                 ) : (
                   <div style={styles.imageGrid}>
                     {carouselImages.map((img) => (
@@ -1182,7 +1278,7 @@ const AdminPage: React.FC = () => {
                   انتخاب تصویر دسته‌بندی:
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/png"
                     onChange={(e) => setCategoryImage(e.target.files?.[0] || null)}
                     style={styles.fileInput}
                   />
@@ -1383,7 +1479,7 @@ const AdminPage: React.FC = () => {
                   انتخاب تصویر محصول:
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/png"
                     onChange={(e) => setProductImage(e.target.files?.[0] || null)}
                     style={styles.fileInput}
                     required={!editingProduct}
@@ -1546,6 +1642,10 @@ const AdminPage: React.FC = () => {
             <h2 >مدیریت شبکه‌های اجتماعی</h2>
             <SocialLinksManager />
           </div> */}
+        </section>
+
+        <section>
+          <AdminMessages />
         </section>
 
         {/* بقیه بخش‌ها (مقالات، آپلود تصویر، ویرایش محتوا) */}

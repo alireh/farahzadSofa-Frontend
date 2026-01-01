@@ -216,3 +216,23 @@
     font-size: 13px;
     color: #aaa;
 }
+
+.footer-about {
+    max-width: 300px;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.footer-description {
+    margin-bottom: 12px;
+    color: #ccc;
+}
+
+.footer-contact p {
+    margin: 4px 0;
+}
+
+.footer-contact a {
+    color: #fff;
+    text-decoration: none;
+}

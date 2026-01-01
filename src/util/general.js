@@ -5,7 +5,6 @@ export function toPersianDigits(text) {
 }
 
 export function getImgUrl(hostUrl, url) {
-    debugger
     let path = hostUrl.toString();
     path = path.endsWith('/') ? path : `${path}/`;
     let imgPath = url;

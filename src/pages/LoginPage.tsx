@@ -1,96 +1,142 @@
-import React, { useState } from "react";
+// LoginPage.tsx
+import React, { useState, FormEvent } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import * as FaIcons from "react-icons/fa";
 import "../styles/login.css";
-const Host_Url = process.env.REACT_APP_HOST_URL;
 
-function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+// Define interface for login response
+interface LoginResponse {
+  token: string;
+  message?: string;
+}
+
+const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault(); // ⬅️ اولین خط
+  const handleLogin = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      const res = await fetch(`${Host_Url}/api/admin/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await axios.post<LoginResponse>(
+        `${process.env.REACT_APP_HOST_URL}/api/admin/login`,
+        {
+          email,
+          password,
+        }
+      );
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "خطا در ورود");
-        return;
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        navigate("/admin");
+      } else {
+        setError("خطا در دریافت توکن");
       }
-
-      localStorage.setItem("token", data.token);
-      navigate("/admin", { replace: true });
-    } catch {
-      setError("خطا در اتصال به سرور");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response) {
+        setError(
+          err.response.data?.message ||
+          "نام کاربری یا کلمه عبور اشتباه است"
+        );
+      } else {
+        setError("خطا در ارتباط با سرور");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
   return (
-    <div className="page-container page">
-      <main className="main-content">
-        <div className="grid">
-          <form className="form login" onSubmit={handleLogin}>
-            <div className="form__field">
-              <label htmlFor="login__username">
-                <svg className="icon">
-                  <use xlinkHref="#icon-user" />
-                </svg>
-              </label>
-              <input
-                autoComplete="username"
-                id="login__username"
-                type="text"
-                name="username"
-                className="form__input"
-                placeholder="نام کاربری"
-                required
-                onChange={(e) => setEmail(e.target.value)}
-              />
+    <div className="login-page">
+      <div className="login-container">
+        {/* Header */}
+        <div className="login-header">
+          <div className="logo-wrapper">
+            <img src="/images/logo192.jpg" alt="مبل فرحزاد" />
+            <div>
+              <h1 className="login-title">پنل مدیریتی مبل فرحزاد</h1>
+              <p className="login-subtitle">ورود به بخش مدیریت سایت</p>
             </div>
-            <div className="form__field">
-              <label htmlFor="login__password">
-                <svg className="icon">
-                  <use xlinkHref="#icon-lock" />
-                </svg>
-              </label>
-              <input
-                id="login__password"
-                type="password"
-                name="password"
-                className="form__input"
-                placeholder="کلمه عبور"
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className="form__field">
-              <input type="submit" value="ورود" />
-            </div>
-          </form>
-          <p className="text--center">
-            اگر قبلا ثبت نام نکرده‌اید <a href="#">ثبت نام کنید</a>
-            <svg className="icon">
-              <use xlinkHref="#icon-arrow-right" />
-            </svg>
-          </p>
+          </div>
         </div>
-      </main>
+
+        {/* Error Message */}
+        {error && (
+          <div className="error-message">
+            <FaIcons.FaLock />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* Login Form */}
+        <form className="login-form" onSubmit={handleLogin}>
+          <div className="form-group">
+            <label htmlFor="email">
+              <FaIcons.FaUser className="form-icon" />
+              نام کاربری
+            </label>
+            <input
+              type="text"
+              id="email"
+              className="form-input"
+              placeholder="نام کاربری خود را وارد کنید"
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+            />
+            <FaIcons.FaUser className="input-icon" />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password">
+              <FaIcons.FaLock className="form-icon" />
+              کلمه عبور
+            </label>
+            <input
+              type="password"
+              id="password"
+              className="form-input"
+              placeholder="کلمه عبور خود را وارد کنید"
+              value={password}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+            />
+            <FaIcons.FaLock className="input-icon" />
+          </div>
+
+          <button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? (
+              <>
+                <div className="loading-spinner"></div>
+                در حال ورود...
+              </>
+            ) : (
+              <>
+                ورود به پنل
+                <FaIcons.FaArrowRight />
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Footer */}
+        <div className="login-footer">
+          <a href="/" className="back-link">
+            <FaIcons.FaHome />
+            بازگشت به صفحه اصلی
+          </a>
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default LoginPage;

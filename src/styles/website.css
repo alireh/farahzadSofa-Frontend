@@ -2,21 +2,27 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body {
-    font-family: "IranianSans", sans-serif;
-}
-
+/* در فایل App.css یا index.css */
 @font-face {
-    font-family: "IranianSans";
-    src: url("./../assets/fonts/IranianSans.ttf") format("truetype");
+    font-family: 'iransans';
+    /* نام دلخواهی که برای فونت انتخاب می‌کنید */
+    src: url('../fonts/Iranian Sans.ttf') format('truetype');
+    /* اگر فرمت‌های دیگر دارید، می‌توانید به‌صورت زیر اضافه کنید */
+    /* src: url('./fonts/Yekan.woff2') format('woff2'), */
+    /*      url('./fonts/Yekan.woff') format('woff'), */
+    /*      url('./fonts/Yekan.ttf') format('truetype'); */
     font-weight: normal;
     font-style: normal;
     font-display: swap;
+    /* برای نمایش سریع‌تر متن با فونت جایگزین تا فونت اصلی بارگیری شود */
 }
+
+body {
+    font-family: 'iransans', 'Segoe UI', Tahoma, sans-serif !important;
+}
+
 
 .App {
     direction: rtl;
@@ -64,7 +70,7 @@ body {
 }
 
 .nav-ml {
-    margin-left: 5em;
+    margin-left: 11em;
 }
 
 .nav a {
@@ -81,7 +87,7 @@ body {
 /* بخش Logout */
 .logout-container {
     position: absolute;
-    left: 20px;
+    left: 6em;
     top: 50%;
     transform: translateY(-50%);
 }
@@ -441,14 +447,10 @@ body {
     flex-direction: column;
 }
 
-.article-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-}
-
 .article-image {
     height: 200px;
     overflow: hidden;
+    height: 50%;
 }
 
 .article-image img {
@@ -458,15 +460,20 @@ body {
     transition: transform 0.5s ease;
 }
 
-.article-card:hover .article-image img {
-    transform: scale(1.05);
-}
-
 .article-content {
     padding: 25px;
     flex: 1;
     display: flex;
     flex-direction: column;
+}
+
+.article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.article-card:hover .article-image img {
+    transform: scale(1.05);
 }
 
 .article-meta {

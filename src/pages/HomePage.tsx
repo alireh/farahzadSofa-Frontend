@@ -7,9 +7,11 @@ import '../constant/pageSectionType'
 import SimpleCarousel from "../components/simpleCarousel";
 import SEOHead from "../SEOHead";
 import { getImgUrl, toPersianDigits } from "../util/general";
+import ContactForm from "./ContactForm";
 const Host_Url = process.env.REACT_APP_HOST_URL;
 
 enum PageSectionType {
+  gallery = "gallery",
   Blog = "blog",
   Contact = "contact",
   About = "about",
@@ -26,6 +28,7 @@ interface Article {
 
 const HomePage: React.FC = () => {
   const contactUsSectionRef = useRef<HTMLDivElement>(null);
+  const gallerySectionRef = useRef<HTMLDivElement>(null);
   const blogSectionRef = useRef<HTMLDivElement>(null);
   const aboutUsSectionRef = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<SiteData | null>(null);
@@ -45,6 +48,7 @@ const HomePage: React.FC = () => {
 
   // استفاده از useMemo برای بهینه‌سازی
   const sectionRefs = useMemo(() => ({
+    [PageSectionType.gallery]: gallerySectionRef,
     [PageSectionType.Blog]: blogSectionRef,
     [PageSectionType.Contact]: contactUsSectionRef,
     [PageSectionType.About]: aboutUsSectionRef,
@@ -250,6 +254,11 @@ const HomePage: React.FC = () => {
     navigate(PageSectionType.Contact);
   };
 
+  const galleryLinkClick = (e: any) => {
+    e.preventDefault();
+    navigate(PageSectionType.gallery);
+  };
+
   const blogLinkClick = (e: any) => {
     e.preventDefault();
     navigate(PageSectionType.Blog);
@@ -370,31 +379,19 @@ const HomePage: React.FC = () => {
 
         <nav className={isLoggedIn ? "nav nav-ml" : "nav"}>
           <a href="#">خانه</a>
-          <a href="#">گالری</a>
+          <a onClick={(e) => galleryLinkClick(e)} href="#">گالری</a>
           <a onClick={(e) => blogLinkClick(e)} href="#">مقالات</a>
           <a onClick={(e) => contactUsLinkClick(e)} href="#">تماس با ما</a>
           <a onClick={(e) => aboutUsLinkClick(e)} href="#">درباره ما</a>
         </nav>
       </header>
 
-      {/* بقیه کدها بدون تغییر */}
-      {!data.settings?.show_carousel && (
-        <section className="hero back-header">
-          <div className="hero-content header-title">
-            <h2>به فروشگاه ما خوش آمدید</h2>
-            <h1>گالری مبلمان</h1>
-            <p>محصولات منتخب ما را ببینید</p>
-            <button className="shop-btn">همین حالا بخرید</button>
-          </div>
-        </section>
-      )}
-
       {/* <SimpleCarousel /> */}
       {renderHeroSection()}
 
       {/* Featured Products */}
-      <section className="featured-products">
-        <h2>محصولات ویژه</h2>
+      <section className="featured-products" ref={gallerySectionRef}>
+        <h2>گالری</h2>
         <div className="products-grid">
           {data.images.map((img, i) => (
             <div className="product-card" key={i}>
@@ -554,10 +551,10 @@ const HomePage: React.FC = () => {
         </section>
       )}
 
-      {/* Featured Products (محصولات ویژه) */}
+      {/* Featured Products (گالری) */}
       {/* {!showAllProducts && (
         <section className="featured-products">
-          <h2>محصولات ویژه</h2>
+          <h2>گالری</h2>
           <div className="products-grid">
           </div>
         </section>
@@ -642,7 +639,7 @@ const HomePage: React.FC = () => {
 
       {/* Contact Section */}
       <section className="contact-section" ref={contactUsSectionRef}>
-        <h2>تماس با ما</h2>
+        {/* <h2>تماس با ما</h2>
         <p>
           هفت روز هفته میتونید با ما در تماس باشید
         </p>
@@ -651,12 +648,16 @@ const HomePage: React.FC = () => {
           <input type="email" placeholder="ایمیل شما" />
           <textarea placeholder="پیام شما"></textarea>
           <button type="submit">ارسال پیام</button>
-        </form>
+        </form> */}
+        <ContactForm />
       </section>
 
       {/* Footer */}
       <section className="about-section" ref={aboutUsSectionRef}>
-        <Footer title=""
+        <Footer phone={data.phone}
+          email={data.email}
+          address={data.address}
+          about={data.about}
           linkClick={footerLinkClick}
           socialData={data.socialLinks} />
       </section>
