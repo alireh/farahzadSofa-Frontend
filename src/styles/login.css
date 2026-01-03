@@ -103,7 +103,7 @@
 }
 
 .form-input {
-  width: 100%;
+  width: 85%;
   padding: 15px;
   padding-right: 45px;
   border: 2px solid #e0e0e0;
@@ -128,7 +128,7 @@
 .input-icon {
   position: absolute;
   left: 15px;
-  top: 50%;
+  top: 65%;
   transform: translateY(-50%);
   color: #95a5a6;
   font-size: 1.1rem;

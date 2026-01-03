@@ -866,7 +866,7 @@ const AdminPage: React.FC = () => {
   };
 
 
-  const showAlert = (type: AlertType, message: string) => {
+  function showAlert(type: AlertType, message: string) {
     setAlert({
       show: true,
       type,
@@ -875,7 +875,7 @@ const AdminPage: React.FC = () => {
     setTimeout(() => {
       setAlert(prev => ({ ...prev, show: false }));
     }, 5000);
-  };
+  }
 
   const handleClose = () => {
     setAlert(prev => ({ ...prev, show: false }));
@@ -908,7 +908,7 @@ const AdminPage: React.FC = () => {
       <header style={styles.header}>
         {/* لینک Logout در سمت چپ */}
         {isLoggedIn && (
-          <div className="logout-container">
+          <div>
             <a href="#" onClick={handleLogout} className="logout-link">
               خروج
             </a>

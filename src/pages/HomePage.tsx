@@ -8,6 +8,7 @@ import SimpleCarousel from "../components/simpleCarousel";
 import SEOHead from "../SEOHead";
 import { getImgUrl, toPersianDigits } from "../util/general";
 import ContactForm from "./ContactForm";
+import Header from "./Header";
 const Host_Url = process.env.REACT_APP_HOST_URL;
 
 enum PageSectionType {
@@ -228,6 +229,23 @@ const HomePage: React.FC = () => {
     window.location.href = "/login";
   };
 
+  const sideBarLinkClick = (s: string) => {
+    switch (s) {
+      case "gallery":
+        navigate(PageSectionType.gallery);
+        return;
+      case "about":
+        navigate(PageSectionType.About);
+        return;
+      case "contact":
+        navigate(PageSectionType.Contact);
+        return;
+      case "blog":
+        navigate(PageSectionType.Blog);
+        return;
+    }
+  };
+
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.substr(0, maxLength) + '...';
@@ -361,10 +379,9 @@ const HomePage: React.FC = () => {
         keywords="مبلمان, مبل راحتی, کاناپه, صندلی, میز ناهارخوری, دکوراسیون منزل"
       />
       {/* Header/Navigation */}
-      <header className="header">
+      {/* <header className="header">
         <h1 className="logo">مبل فرحزاد</h1>
 
-        {/* لینک Logout در سمت چپ */}
         {isLoggedIn && (
           <div className="logout-container">
             <a href="#" onClick={handleLogout} className="logout-link">
@@ -384,7 +401,9 @@ const HomePage: React.FC = () => {
           <a onClick={(e) => contactUsLinkClick(e)} href="#">تماس با ما</a>
           <a onClick={(e) => aboutUsLinkClick(e)} href="#">درباره ما</a>
         </nav>
-      </header>
+      </header> */}
+
+      <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} onLinkClick={(s) => sideBarLinkClick(s)} />
 
       {/* <SimpleCarousel /> */}
       {renderHeroSection()}
@@ -448,11 +467,11 @@ const HomePage: React.FC = () => {
                   {category.description && (
                     <p className="category-description">{category.description}</p>
                   )}
-                  <div className="category-meta">
+                  {/* <div className="category-meta">
                     <span className="product-count">
                       {category.product_count || 0} محصول
                     </span>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             ))}
@@ -462,12 +481,12 @@ const HomePage: React.FC = () => {
 
       {/* نمایش محصولات دسته‌بندی انتخاب شده */}
       {showAllProducts && selectedCategory && (
-        <section className="category-products-section">
+        <section className="category-products-section mt-3">
           <div className="section-header">
             <div className="section-header-top">
               <h2 className="section-title">محصولات دسته‌بندی: {selectedCategory.title}</h2>
               <button
-                className="back-to-categories"
+                className="back-to-categories collapse-btn-settings"
                 onClick={() => {
                   setShowAllProducts(false);
                   setSelectedCategory(null);
@@ -512,14 +531,16 @@ const HomePage: React.FC = () => {
 
                     {/* نمایش ویژگی‌ها */}
                     {product.features && (
-                      <div className="product-features">
-                        <h4>ویژگی‌ها:</h4>
-                        <ul>
-                          {product.features.split('\n').filter(f => f.trim()).map((feature, idx) => (
-                            <li key={idx}>{feature.trim()}</li>
-                          ))}
-                        </ul>
-                      </div>
+                      <>
+                        <div className="product-features">
+                          <h4>ویژگی‌ها:</h4>
+                          <ul>
+                            {product.features.split('\n').filter(f => f.trim()).map((feature, idx) => (
+                              <li key={idx}>{feature.trim()}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </>
                     )}
 
                     <div className="product-price-container">

@@ -51,9 +51,6 @@ const ArticlePage: React.FC = () => {
                                     src={article.image_url}
                                     alt={article.title}
                                     className="article-image"
-                                // onError={(e) => {
-                                //     e.target.style.display = 'none';
-                                // }}
                                 />
                             </div>
                         )}
