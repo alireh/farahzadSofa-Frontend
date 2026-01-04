@@ -3,7 +3,7 @@ import React from 'react';
 import "../styles/footer.css";
 import { SocialLink } from '../types';
 import { getImgUrl } from '../util/general';
-const Host_Url = process.env.REACT_APP_HOST_URL;
+const HOST_URL = "";//const HOST_URL = process.env.REACT_APP_HOST_URL;
 
 export interface FooterProps {
     /** عنوان دراپ‌دون */
@@ -69,7 +69,7 @@ const Footer: React.FC<FooterProps> = ({
                         socialData.map((item) => (
 
                             <a href="#" aria-label={`${item.platform}`}>
-                                <img src={`${getImgUrl(Host_Url, item.icon)}`} alt={`${item.platform}`}></img>
+                                <img src={`${getImgUrl(HOST_URL, item.icon)}`} alt={`${item.platform}`}></img>
                             </a>
                         ))}
                 </div>

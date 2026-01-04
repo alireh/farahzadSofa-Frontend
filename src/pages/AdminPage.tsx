@@ -8,7 +8,7 @@ import Alert, { AlertType } from '../components/Alert';
 import { useConfirm } from '../hooks/useConfirm';
 import ConfirmDialog from "../components/confirmDialog";
 import AdminMessages from "./AdminMessages";
-const Host_Url = process.env.REACT_APP_HOST_URL;
+const HOST_URL = !!process.env.REACT_APP_HOST_URL ? process.env.REACT_APP_HOST_URL : '';
 
 interface AlertState {
   show: boolean;
@@ -177,7 +177,7 @@ const AdminPage: React.FC = () => {
           Authorization: `Bearer ${token}`
         },
       };
-      const response = await api.get(`${process.env.REACT_APP_HOST_URL}/api/admin/socials`, header);
+      const response = await api.get(`${HOST_URL}/api/admin/socials`, header);
       setSocialLinks(response.data);
     } catch (error) {
       if (checkSessionTimeout(error)) {
@@ -969,7 +969,7 @@ const AdminPage: React.FC = () => {
                   <div style={styles.currentImage}>
                     <p>تصویر فعلی:</p>
                     <img
-                      src={`${getImgUrl(Host_Url, articles.find(a => a.id === editingArticle)?.image_url)}`}
+                      src={`${getImgUrl(HOST_URL, articles.find(a => a.id === editingArticle)?.image_url)}`}
                       alt="Current"
                       style={styles.currentImagePreview}
                     />
@@ -1034,7 +1034,7 @@ const AdminPage: React.FC = () => {
                     </p>
                     {article.image_url && (
                       <img
-                        src={`${getImgUrl(Host_Url, article.image_url)}`}
+                        src={`${getImgUrl(HOST_URL, article.image_url)}`}
                         alt={article.title}
                         style={styles.articleThumbnail}
                       />
@@ -1094,7 +1094,7 @@ const AdminPage: React.FC = () => {
           <div style={styles.imageList}>
             {data.images.map((img) => (
               <div key={img.id} style={styles.imageItem}>
-                <img src={`${getImgUrl(Host_Url, img.url)}`} alt={img.title} style={styles.adminImage} />
+                <img src={`${getImgUrl(HOST_URL, img.url)}`} alt={img.title} style={styles.adminImage} />
                 <p>{img.title}</p>
                 <p>قیمت : {toPersianDigits(img.price)}</p>
                 <p>قیمت تخفیف : {toPersianDigits(img.off)}</p>
@@ -1219,7 +1219,7 @@ const AdminPage: React.FC = () => {
                     {carouselImages.map((img) => (
                       <div key={img.id} style={styles.carouselImageItem}>
                         <img
-                          src={`${getImgUrl(Host_Url, img.url)}`}
+                          src={`${getImgUrl(HOST_URL, img.url)}`}
                           alt={img.title}
                           style={styles.carouselImage}
                         />
@@ -1291,7 +1291,7 @@ const AdminPage: React.FC = () => {
                   <div style={styles.currentImage}>
                     <p>تصویر فعلی:</p>
                     <img
-                      src={`${getImgUrl(Host_Url, categories.find(c => c.id === editingCategory)?.image_url)}`}
+                      src={`${getImgUrl(HOST_URL, categories.find(c => c.id === editingCategory)?.image_url)}`}
                       alt="Current"
                       style={styles.currentImagePreview}
                     />
@@ -1340,7 +1340,7 @@ const AdminPage: React.FC = () => {
                   <div key={category.id} style={styles.categoryItem}>
                     {category.image_url && (
                       <img
-                        src={`${getImgUrl(Host_Url, category.image_url)}`}
+                        src={`${getImgUrl(HOST_URL, category.image_url)}`}
                         alt={category.title}
                         style={styles.categoryImage}
                       />
@@ -1493,7 +1493,7 @@ const AdminPage: React.FC = () => {
                   <div style={styles.currentImage}>
                     <p>تصویر فعلی:</p>
                     <img
-                      src={`${getImgUrl(Host_Url, products.find(p => p.id === editingProduct)?.image_url)}`}
+                      src={`${getImgUrl(HOST_URL, products.find(p => p.id === editingProduct)?.image_url)}`}
                       alt="Current"
                       style={styles.currentImagePreview}
                     />
@@ -1537,7 +1537,7 @@ const AdminPage: React.FC = () => {
                   return (
                     <div key={product.id} style={styles.productItem}>
                       <img
-                        src={`${getImgUrl(Host_Url, product.image_url)}`}
+                        src={`${getImgUrl(HOST_URL, product.image_url)}`}
                         alt={product.title}
                         style={styles.productImage}
                       />

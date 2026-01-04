@@ -7,6 +7,7 @@ import SEOHead from "../SEOHead";
 import { Article } from "../types";
 import '../styles/articlePage.css'
 
+const HOST_URL = !!process.env.REACT_APP_HOST_URL ? process.env.REACT_APP_HOST_URL : '';
 const ArticlePage: React.FC = () => {
     const [article, setArticle] = useState<Article>();
 
@@ -18,7 +19,7 @@ const ArticlePage: React.FC = () => {
 
     const fetchArticle = async (id: string) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/api/articles/${id}`);
+            const response = await axios.get(`${HOST_URL}/api/articles/${id}`);
             setArticle(response.data);
         } catch (error) {
             console.error("Error fetching category products:", error);

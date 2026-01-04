@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import * as FaIcons from "react-icons/fa";
 import "../styles/login.css";
+const HOST_URL = !!process.env.REACT_APP_HOST_URL ? process.env.REACT_APP_HOST_URL : '';
 
 // Define interface for login response
 interface LoginResponse {
@@ -25,7 +26,7 @@ const LoginPage: React.FC = () => {
 
     try {
       const response = await axios.post<LoginResponse>(
-        `${process.env.REACT_APP_HOST_URL}/api/admin/login`,
+        `${HOST_URL}/api/admin/login`,
         {
           email,
           password,

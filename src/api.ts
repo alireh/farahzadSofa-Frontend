@@ -1,9 +1,9 @@
 import axios from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
-const Host_Url = process.env.REACT_APP_HOST_URL;
+const HOST_URL = !!process.env.REACT_APP_HOST_URL ? process.env.REACT_APP_HOST_URL : '';
 
 const api = axios.create({
-  baseURL: `${Host_Url}/api`,
+  baseURL: `${HOST_URL}/api`,
 });
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {

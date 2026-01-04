@@ -3,7 +3,7 @@ import axios, { AxiosError } from 'axios';
 import MessageModal from '../components/MessageModal';
 import { useConfirm } from '../hooks/useConfirm';
 import ConfirmDialog from "../components/confirmDialog";
-const Host_Url = process.env.REACT_APP_HOST_URL;
+const HOST_URL = !!process.env.REACT_APP_HOST_URL ? process.env.REACT_APP_HOST_URL : '';
 
 export type AlertType = 'success' | 'error';
 
@@ -105,7 +105,7 @@ const AdminMessages: React.FC = () => {
                     messages: Message[];
                     pagination: Pagination;
                     stats: Stats;
-                }>>(`${Host_Url}/api/admin/contact-messages?${params.toString()}`, {
+                }>>(`${HOST_URL}/api/admin/contact-messages?${params.toString()}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Cache-Control': 'no-cache'
@@ -180,7 +180,7 @@ const AdminMessages: React.FC = () => {
     // علامت‌گذاری به عنوان خوانده شده در پس‌زمینه
     const markAsReadInBackground = async (id: number): Promise<void> => {
         try {
-            await axios.put(`${Host_Url}/api/admin/contact-messages/${id}`,
+            await axios.put(`${HOST_URL}/api/admin/contact-messages/${id}`,
                 { is_read: 1 },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -211,7 +211,7 @@ const AdminMessages: React.FC = () => {
             }));
 
             // به‌روزرسانی API
-            await axios.put(`${Host_Url}/api/admin/contact-messages/${id}`,
+            await axios.put(`${HOST_URL}/api/admin/contact-messages/${id}`,
                 { is_read: newStatus },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -231,7 +231,7 @@ const AdminMessages: React.FC = () => {
 
         try {
             // ابتدا API را صدا بزن
-            await axios.delete(`${Host_Url}/api/admin/contact-messages/${id}`, {
+            await axios.delete(`${HOST_URL}/api/admin/contact-messages/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -276,7 +276,7 @@ const AdminMessages: React.FC = () => {
 
         try {
             // ابتدا API را صدا بزن
-            await axios.delete(`${Host_Url}/api/admin/contact-messages`, {
+            await axios.delete(`${HOST_URL}/api/admin/contact-messages`, {
                 headers: { Authorization: `Bearer ${token}` },
                 data: { ids: selectedMessages }
             });

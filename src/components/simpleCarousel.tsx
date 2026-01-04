@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/simpleCarousel.css';
 import { getImgUrl } from '../util/general';
-const Host_Url = process.env.REACT_APP_HOST_URL;
+const HOST_URL = "";//const HOST_URL = process.env.REACT_APP_HOST_URL;
 
 interface CarouselProps {
     images: Array<{
@@ -99,7 +99,7 @@ const SimpleCarousel: React.FC<CarouselProps> = ({
             <div className="carousel-slides-wrapper">
                 <div className="carousel-slide">
                     <img
-                        src={`${getImgUrl(Host_Url, images[currentIndex].url)}`}
+                        src={`${getImgUrl(HOST_URL, images[currentIndex].url)}`}
                         alt={images[currentIndex].title}
                         className="carousel-image"
                         loading="lazy"
