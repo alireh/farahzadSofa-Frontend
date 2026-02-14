@@ -5,13 +5,15 @@ import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute2';
 import ArticlePage from './pages/ArticlePage';
+import FurnitureStore from './pages/FurnitureStore';
 
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<FurnitureStore />} />
+        {/* <Route path="/" element={<HomePage />} /> */}
         <Route path="/articles/:id" element={<ArticlePage />} />
 
         {/* Protected routes */}
