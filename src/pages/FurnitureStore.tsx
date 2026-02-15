@@ -6,6 +6,7 @@ import Collections from '../component2/Collections';
 import Products from '../component2/Products';
 import Description from '../component2/Description';
 import Footer from '../component2/Footer';
+import Articles from '../component2/Articles';
 
 const FurnitureStore = () => {
     return (
@@ -14,6 +15,7 @@ const FurnitureStore = () => {
             <Hero />
             <Collections />
             <Products />
+            <Articles />
             <Description />
             <Footer />
         </div>

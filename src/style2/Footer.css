@@ -13,7 +13,7 @@
 }
 
 .footer-section h3 {
-    color: #8B4513;
+    color: #c1b086;
     margin-bottom: 1.5rem;
     font-size: 1.2rem;
 }
@@ -40,7 +40,7 @@
 }
 
 .footer-section ul li a:hover {
-    color: #8B4513;
+    color: #c1b086;
 }
 
 .social-links {
@@ -62,7 +62,7 @@
 }
 
 .social-link:hover {
-    background-color: #8B4513;
+    background-color: #c1b086;
 }
 
 .contact-info li,

@@ -1,42 +1,111 @@
-/* components/Header.css */
+/* style2/Header.css */
 .header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.header.scrolled {
+  padding: 0.5rem 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 5%;
-  background-color: #ffffff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.logo h2 {
-  color: #8B4513;
-  font-size: 1.8rem;
+/* لوگو */
+.logo {
+  flex-shrink: 0;
+  z-index: 1001;
+}
+
+.logo img {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* دکمه همبرگری */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 25px;
+  background: transparent;
+  border: none;
   cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+}
+
+.hamburger span {
+  width: 30px;
+  height: 3px;
+  background: #8B4513;
+  border-radius: 10px;
+  transition: all 0.3s linear;
+  position: relative;
+  transform-origin: 1px;
+}
+
+.hamburger.active span:first-child {
+  transform: rotate(45deg);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:last-child {
+  transform: rotate(-45deg);
+}
+
+/* منوی ناوبری */
+.nav-menu {
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .nav-menu ul {
   display: flex;
   list-style: none;
-  gap: 2rem;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
 }
 
 .nav-menu ul li a {
   text-decoration: none;
   color: #333;
   font-weight: 500;
+  font-size: 0.95rem;
   transition: color 0.3s;
+  white-space: nowrap;
 }
 
 .nav-menu ul li a:hover {
   color: #8B4513;
 }
 
+/* آیکون‌ها */
 .header-icons {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.2rem;
+  flex-shrink: 0;
+  z-index: 1001;
 }
 
 .icon {
@@ -48,4 +117,144 @@
 .icon:hover {
   transform: scale(1.1);
   color: #8B4513;
+}
+
+/* ========== ریسپانسیو ========== */
+
+/* تبلت و موبایل */
+@media screen and (max-width: 1024px) {
+  .nav-menu ul {
+    gap: 1rem;
+  }
+
+  .nav-menu ul li a {
+    font-size: 0.85rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: white;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    padding-top: 80px;
+  }
+
+  .nav-menu.active {
+    right: 0;
+  }
+
+  .nav-menu ul {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem;
+    gap: 1.5rem;
+  }
+
+  .nav-menu ul li {
+    width: 100%;
+  }
+
+  .nav-menu ul li a {
+    font-size: 1rem;
+    display: block;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .nav-menu ul li:last-child a {
+    border-bottom: none;
+  }
+
+  /* آیکون‌ها در موبایل */
+  .header-icons {
+    gap: 0.8rem;
+  }
+
+  .icon {
+    font-size: 1rem;
+  }
+
+  /* لوگو در موبایل */
+  .logo img {
+    height: 40px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .header-container {
+    padding: 0.8rem 4%;
+  }
+
+  .logo img {
+    height: 35px;
+  }
+
+  .header-icons {
+    gap: 0.5rem;
+  }
+
+  .icon {
+    font-size: 0.9rem;
+  }
+
+  .nav-menu {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* برای صفحه‌های خیلی کوچک */
+@media screen and (max-width: 320px) {
+  .header-icons {
+    display: none;
+  }
+}
+
+/* اضافه کردن overlay وقتی منو باز است */
+.nav-menu.active::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* استایل برای آیتم فعال منو */
+.nav-menu ul li a.active {
+  color: #8B4513;
+  font-weight: 600;
+}
+
+/* انیمیشن برای هاور آیتم‌های منو در موبایل */
+@media screen and (max-width: 768px) {
+  .nav-menu ul li a:hover {
+    padding-right: 10px;
+    transition: padding 0.3s;
+  }
 }
