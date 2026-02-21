@@ -1,20 +1,56 @@
 import '../style2/Header.css';
 import React, { useState, useEffect } from 'react';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  token?: string | null;
+  onLogout?: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ token, onLogout }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
-    // بستن منو با کلیک روی لینک
+    const toggleSearch = () => {
+        setSearchOpen(!searchOpen);
+        if (!searchOpen) {
+            setTimeout(() => {
+                document.getElementById('search-input')?.focus();
+            }, 100);
+        }
+    };
+
     const closeMenu = () => {
         setIsMenuOpen(false);
     };
 
-    // تشخیص اسکرول برای تغییر استایل هدر
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
+        // اینجا می‌توانید منطق فیلتر کردن را اضافه کنید
+        // dispatch search action
+    };
+
+    const handleLogoutClick = () => {
+        setShowLogoutConfirm(true);
+    };
+
+    const handleLogoutConfirm = () => {
+        if (onLogout) {
+            onLogout();
+        }
+        setShowLogoutConfirm(false);
+    };
+
+    const handleLogoutCancel = () => {
+        setShowLogoutConfirm(false);
+    };
+
     useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY > 50) {
@@ -30,7 +66,6 @@ const Header: React.FC = () => {
         };
     }, []);
 
-    // بستن منو با تغییر سایز صفحه
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth > 768 && isMenuOpen) {
@@ -44,6 +79,20 @@ const Header: React.FC = () => {
         };
     }, [isMenuOpen]);
 
+    // بستن سرچ با کلیک خارج
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (searchOpen && !(event.target as Element).closest('.search-container')) {
+                setSearchOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [searchOpen]);
+
     return (
         <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
             <div className="header-container">
@@ -52,8 +101,8 @@ const Header: React.FC = () => {
                 </div>
 
                 {/* دکمه همبرگری برای موبایل */}
-                <button
-                    className={`hamburger ${isMenuOpen ? 'active' : ''}`}
+                <button 
+                    className={`hamburger ${isMenuOpen ? 'active' : ''}`} 
                     onClick={toggleMenu}
                     aria-label="منو"
                 >
@@ -77,13 +126,56 @@ const Header: React.FC = () => {
                     </ul>
                 </nav>
 
-                {/* آیکون‌ها */}
+                {/* آیکون‌ها با سرچ */}
                 <div className="header-icons">
-                    <span className="icon">🔍</span>
+                    <div className="search-container">
+                        <span className="icon search-icon" onClick={toggleSearch}>🔍</span>
+                        {searchOpen && (
+                            <div className="search-box">
+                                <input
+                                    id="search-input"
+                                    type="text"
+                                    placeholder="جستجو در محصولات..."
+                                    value={searchTerm}
+                                    onChange={handleSearch}
+                                    className="search-input"
+                                />
+                                <button className="search-submit">🔍</button>
+                            </div>
+                        )}
+                    </div>
                     <span className="icon">🛒</span>
-                    <span className="icon">👤</span>
+                    
+                    {/* نمایش دکمه خروج فقط در صورت وجود token */}
+                    {token && (
+                        <span 
+                            className="icon logout-icon" 
+                            title="خروج"
+                            onClick={handleLogoutClick}
+                        >
+                            🚪
+                        </span>
+                    )}
                 </div>
             </div>
+
+            {/* مودال تأیید خروج */}
+            {showLogoutConfirm && (
+                <div className="logout-modal-overlay" onClick={handleLogoutCancel}>
+                    <div className="logout-modal" onClick={(e) => e.stopPropagation()}>
+                        <h3>خروج از حساب کاربری</h3>
+                        <p>آیا مطمئن هستید که می‌خواهید خارج شوید؟</p>
+                        <div className="logout-modal-actions">
+                            <button className="logout-confirm-btn" onClick={handleLogoutConfirm}>
+                                بله، خارج شو
+                            </button>
+                            <button className="logout-cancel-btn" onClick={handleLogoutCancel}>
+                                انصراف
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     );
 };

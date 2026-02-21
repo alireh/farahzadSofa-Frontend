@@ -1,0 +1,78 @@
+/* components/Workflow.css */
+.workflow {
+  padding: 4rem 5%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+}
+
+.workflow-content h2 {
+  color: #8B4513;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.traditional, .direct {
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.traditional {
+  background: #fff3f3;
+  border-right: 4px solid #dc3545;
+}
+
+.direct {
+  background: #e8f5e9;
+  border-right: 4px solid #28a745;
+}
+
+.traditional h3, .direct h3 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.traditional h3 {
+  color: #dc3545;
+}
+
+.direct h3 {
+  color: #28a745;
+}
+
+.comparison ul {
+  list-style: none;
+  padding: 0;
+}
+
+.comparison ul li {
+  margin-bottom: 0.8rem;
+  color: #495057;
+  line-height: 1.6;
+}
+
+.workflow-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .workflow {
+    grid-template-columns: 1fr;
+  }
+  
+  .comparison {
+    grid-template-columns: 1fr;
+  }
+}

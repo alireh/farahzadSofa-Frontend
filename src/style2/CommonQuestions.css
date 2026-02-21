@@ -1,0 +1,74 @@
+/* components/CommonQuestions.css */
+.common-questions {
+  padding: 4rem 5%;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.questions-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.question-item {
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.question-item:hover {
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.15);
+}
+
+.question-header {
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background: white;
+}
+
+.question-header h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0;
+  flex: 1;
+}
+
+.toggle-icon {
+  font-size: 1.5rem;
+  color: #8B4513;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s;
+}
+
+.question-item.active .question-header {
+  background: #8B4513;
+}
+
+.question-item.active .question-header h3 {
+  color: white;
+}
+
+.question-item.active .toggle-icon {
+  color: white;
+}
+
+.answer {
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+}
+
+.answer p {
+  margin: 0;
+  line-height: 1.8;
+  color: #495057;
+}
