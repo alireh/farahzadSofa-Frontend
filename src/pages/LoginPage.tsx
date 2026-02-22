@@ -19,37 +19,31 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
 
     try {
-      const response = await axios.post<LoginResponse>(
-        `${HOST_URL}/api/admin/login`,
-        {
-          email,
-          password,
-        }
-      );
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password })
+      });
 
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
-        navigate("/admin");
+      const data = await response.json();
+      console.log('Response:', data);
+
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        // ریدایرکت به صفحه ادمین
+        window.location.href = '/admin'; // یا useNavigate()
       } else {
-        setError("خطا در دریافت توکن");
+        setError('خطا در دریافت توکن');
       }
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err) && err.response) {
-        setError(
-          err.response.data?.message ||
-          "نام کاربری یا کلمه عبور اشتباه است"
-        );
-      } else {
-        setError("خطا در ارتباط با سرور");
-      }
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error('Error:', error);
+      setError('خطا در ارتباط با سرور');
     }
   };
 

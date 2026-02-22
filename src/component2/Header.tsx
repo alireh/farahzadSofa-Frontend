@@ -2,8 +2,18 @@ import '../style2/Header.css';
 import React, { useState, useEffect } from 'react';
 
 interface HeaderProps {
-  token?: string | null;
-  onLogout?: () => void;
+    token?: string | null;
+    onLogout?: ()
+        => void;
+}
+
+interface MenuItem {
+    id: number;
+    title: string;
+    link: string;
+    parent_id: number;
+    order: number;
+    is_visible: number;
 }
 
 const Header: React.FC<HeaderProps> = ({ token, onLogout }) => {
@@ -12,6 +22,8 @@ const Header: React.FC<HeaderProps> = ({ token, onLogout }) => {
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+    const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -51,7 +63,22 @@ const Header: React.FC<HeaderProps> = ({ token, onLogout }) => {
         setShowLogoutConfirm(false);
     };
 
+    // تابع دریافت منو هم همینطور
+    const fetchMenuItems = async () => {
+        try {
+            const response = await fetch('/api/header');
+            const data = await response.json();
+            if (data.success) {
+                setMenuItems(data.data);
+            }
+        } catch (error) {
+            console.error('خطا در دریافت منو:', error);
+        }
+    };
+
     useEffect(() => {
+
+        fetchMenuItems();
         const handleScroll = () => {
             if (window.scrollY > 50) {
                 setIsScrolled(true);
@@ -101,8 +128,8 @@ const Header: React.FC<HeaderProps> = ({ token, onLogout }) => {
                 </div>
 
                 {/* دکمه همبرگری برای موبایل */}
-                <button 
-                    className={`hamburger ${isMenuOpen ? 'active' : ''}`} 
+                <button
+                    className={`hamburger ${isMenuOpen ? 'active' : ''}`}
                     onClick={toggleMenu}
                     aria-label="منو"
                 >
@@ -114,15 +141,16 @@ const Header: React.FC<HeaderProps> = ({ token, onLogout }) => {
                 {/* منوی ناوبری */}
                 <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
                     <ul>
-                        <li><a href="#" onClick={closeMenu}>خانه</a></li>
-                        <li><a href="#" onClick={closeMenu}>مبل</a></li>
-                        <li><a href="#" onClick={closeMenu}>اکسسوری</a></li>
-                        <li><a href="#" onClick={closeMenu}>کنسول</a></li>
-                        <li><a href="#" onClick={closeMenu}>میز غذاخوری</a></li>
-                        <li><a href="#" onClick={closeMenu}>جلومبلی</a></li>
-                        <li><a href="#" onClick={closeMenu}>محصولات</a></li>
-                        <li><a href="#" onClick={closeMenu}>سرویس خواب</a></li>
-                        <li><a href="#" onClick={closeMenu}>تماس با ما</a></li>
+                        {menuItems.map(item => (
+                            <li key={item.id}>
+                                <a
+                                    href={item.link}
+                                    onClick={closeMenu}
+                                >
+                                    {item.title}
+                                </a>
+                            </li>
+                        ))}
                     </ul>
                 </nav>
 
@@ -145,11 +173,11 @@ const Header: React.FC<HeaderProps> = ({ token, onLogout }) => {
                         )}
                     </div>
                     <span className="icon">🛒</span>
-                    
+
                     {/* نمایش دکمه خروج فقط در صورت وجود token */}
                     {token && (
-                        <span 
-                            className="icon logout-icon" 
+                        <span
+                            className="icon logout-icon"
                             title="خروج"
                             onClick={handleLogoutClick}
                         >
