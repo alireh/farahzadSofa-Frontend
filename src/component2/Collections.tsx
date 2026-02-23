@@ -34,8 +34,8 @@ const Collections: React.FC = () => {
       <h2 className="section-title">کالکشن‌های ویژه</h2>
       <div className="collections-grid">
         {collections.map(item => (
-          <div 
-            key={item.id} 
+          <div
+            key={item.id}
             className={`collection-item ${selectedCollection?.id === item.id ? 'active' : ''}`}
             onClick={() => handleCollectionClick(item)}
           >

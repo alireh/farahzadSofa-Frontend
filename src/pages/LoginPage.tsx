@@ -17,12 +17,12 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   // اگر قبلا لاگین کرده بود مستقیم بفرست ادمین
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      navigate("/admin");
-    }
-  }, [navigate]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   // if (token) {
+  //   //   navigate("/admin");
+  //   // }
+  // }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

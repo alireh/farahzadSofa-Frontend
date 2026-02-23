@@ -28,7 +28,7 @@ const AdminPage: React.FC = () => {
   const token = localStorage.getItem("token");
 
   // تب‌ها
-  const [activeTab, setActiveTab] = useState<"menu" | "hero" | "collection">(
+  const [activeTab, setActiveTab] = useState<"menu" | "hero" | "collection" | "subCollection">(
     "menu"
   );
 
@@ -48,6 +48,15 @@ const AdminPage: React.FC = () => {
   // ===== Collection states =====
   const [collections, setCollections] = useState<CollectionItem[]>([]);
   const [editingId, setEditingId] = useState<number | null>(null);
+
+  // ===== SubCollection states =====
+  const [selectedCollectionId, setSelectedCollectionId] = useState<number>(0);
+  const [subCollections, setSubCollections] = useState<any[]>([]);
+  const [subName, setSubName] = useState("");
+  const [subPrice, setSubPrice] = useState<number>(0);
+  const [subOldPrice, setSubOldPrice] = useState<number>(0);
+  const [subImage, setSubImage] = useState<File | null>(null);
+  const [editingSubId, setEditingSubId] = useState<number | null>(null);
 
   // ===== Protect admin =====
   useEffect(() => {
@@ -166,7 +175,12 @@ const AdminPage: React.FC = () => {
     formData.append("mobile", mobileFile);
 
     try {
-      const res = await fetch("/api/collections", { method: "POST", body: formData });
+      const res = await fetch("/api/collections", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }, body: formData
+      });
       const newCollection = await res.json();
       setCollections([...collections, newCollection]);
       setTitle("");
@@ -194,6 +208,9 @@ const AdminPage: React.FC = () => {
     try {
       const res = await fetch(`/api/collections/${editingId}`, {
         method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
       const updated = await res.json();
@@ -213,11 +230,99 @@ const AdminPage: React.FC = () => {
     if (!window.confirm("آیا مطمئن هستید که می‌خواهید این کالکشن را حذف کنید؟"))
       return;
     try {
-      await fetch(`/api/collections/${id}`, { method: "DELETE" });
+      await fetch(`/api/collections/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        }
+      });
       setCollections(collections.filter((c) => c.id !== id));
     } catch (err) {
       console.error(err);
     }
+  };
+
+  useEffect(() => {
+    if (!selectedCollectionId) return;
+
+    fetch(`/api/sub-collections/${selectedCollectionId}`)
+      .then((r) => r.json())
+      .then(setSubCollections)
+      .catch(console.error);
+  }, [selectedCollectionId]);
+
+  const addSubCollection = async () => {
+    if (!selectedCollectionId) return alert("کالکشن را انتخاب کن");
+
+    const formData = new FormData();
+    formData.append("collection_id", String(selectedCollectionId));
+    formData.append("name", subName);
+    formData.append("price", String(subPrice));
+    formData.append("old_price", String(subOldPrice));
+    if (subImage) formData.append("image", subImage);
+
+    await fetch("/api/sub-collections", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    setSubName("");
+    setSubPrice(0);
+    setSubOldPrice(0);
+    setSubImage(null);
+
+    // reload
+    fetch(`/api/sub-collections/${selectedCollectionId}`)
+      .then((r) => r.json())
+      .then(setSubCollections);
+  };
+
+  const editSubCollection = (item: any) => {
+    setEditingSubId(item.id);
+    setSubName(item.name);
+    setSubPrice(item.price);
+    setSubOldPrice(item.old_price || 0);
+  };
+
+  const saveEditSubCollection = async () => {
+    if (!editingSubId) return;
+
+    const formData = new FormData();
+    formData.append("name", subName);
+    formData.append("price", String(subPrice));
+    formData.append("old_price", String(subOldPrice));
+    if (subImage) formData.append("image", subImage);
+
+    await fetch(`/api/sub-collections/${editingSubId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    setEditingSubId(null);
+    setSubName("");
+
+    fetch(`/api/sub-collections/${selectedCollectionId}`)
+      .then((r) => r.json())
+      .then(setSubCollections);
+  };
+
+  const deleteSubCollection = async (id: number) => {
+    await fetch(`/api/sub-collections/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      }
+    });
+
+    setSubCollections((prev) => prev.filter((x) => x.id !== id));
   };
 
   return (
@@ -233,6 +338,9 @@ const AdminPage: React.FC = () => {
           </li>
           <li className={activeTab === "collection" ? "active" : ""} onClick={() => setActiveTab("collection")}>
             مدیریت کالکشن‌ها
+          </li>
+          <li className={activeTab === "subCollection" ? "active" : ""} onClick={() => setActiveTab("subCollection")}>
+            مدیریت زیرکالکشن‌ها
           </li>
         </ul>
       </aside>
@@ -319,11 +427,109 @@ const AdminPage: React.FC = () => {
 
             {collections.map((c) => (
               <div key={c.id} className="admin-collection-item">
-                <span>{c.title}</span>
-                <button onClick={() => editCollection(c)}>ویرایش</button>
-                <button onClick={() => deleteCollection(c.id)}>حذف</button>
+
+                <div className="collection-info">
+                  <img
+                    src={c.desktop_image}
+                    alt={c.title}
+                    className="collection-thumb"
+                  />
+                  <span>{c.title}</span>
+                </div>
+
+                <div className="collection-actions">
+                  <button onClick={() => editCollection(c)}>ویرایش</button>
+                  <button onClick={() => deleteCollection(c.id)}>حذف</button>
+                </div>
+
               </div>
             ))}
+          </div>
+        )}
+
+        {/* ----- Collection Tab ----- */}
+        {activeTab === "subCollection" && (
+          <div className="admin-subcollection-box">
+            <h3>مدیریت زیرکالکشن‌ها</h3>
+
+            {/* انتخاب کالکشن */}
+            <select
+              value={selectedCollectionId}
+              onChange={(e) => setSelectedCollectionId(Number(e.target.value))}
+            >
+              <option value={0}>انتخاب کالکشن</option>
+              {collections.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.title}
+                </option>
+              ))}
+            </select>
+
+            {/* فرم */}
+            <div className="subcollection-form">
+              <input
+                placeholder="نام محصول"
+                value={subName}
+                onChange={(e) => setSubName(e.target.value)}
+              />
+
+              <input
+                placeholder="قیمت"
+                type="number"
+                value={subPrice}
+                onChange={(e) => setSubPrice(Number(e.target.value))}
+              />
+
+              <input
+                placeholder="قیمت قبل"
+                type="number"
+                value={subOldPrice}
+                onChange={(e) => setSubOldPrice(Number(e.target.value))}
+              />
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  setSubImage(e.target.files ? e.target.files[0] : null)
+                }
+              />
+
+              <button
+                onClick={editingSubId ? saveEditSubCollection : addSubCollection}
+              >
+                {editingSubId ? "💾 ذخیره زیرکالکشن" : "➕ افزودن زیرکالکشن"}
+              </button>
+            </div>
+
+            {/* لیست */}
+            <div className="subcollection-list">
+              {subCollections.map((s) => (
+                <div key={s.id} className="subcollection-item">
+
+                  <div className="subcollection-info">
+                    <img
+                      src={s.image}
+                      alt={s.name}
+                      className="subcollection-thumb"
+                    />
+
+                    <div>
+                      <div className="sub-name">{s.name}</div>
+                      <div className="sub-price">
+                        {s.price?.toLocaleString("fa-IR")} تومان
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <button onClick={() => editSubCollection(s)}>ویرایش</button>
+                    <button onClick={() => deleteSubCollection(s.id)}>حذف</button>
+                  </div>
+
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </main>
