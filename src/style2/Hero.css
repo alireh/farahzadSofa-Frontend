@@ -1,10 +1,9 @@
-/* components/Hero.css */
+/* Hero Section */
 .hero {
     height: 90vh;
     width: 100%;
-    background-image:
-        /* url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'); */
-        url('https://plus.unsplash.com/premium_photo-1683121179538-35f7fe9a1f16?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjkzfHxzb2ZhfGVufDB8fDB8fHww');
+     /* تصویر پیش فرض دسکتاپ */
+    /* background-image: url('http://localhost:5000/uploads/default-desktop.jpg'); */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -13,36 +12,79 @@
     justify-content: center;
     text-align: center;
     color: white;
+    position: relative;
+    transition: background-image 0.5s ease-in-out;
 }
 
+/* Overlay تیره برای خوانایی متن */
+.hero::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.35);
+}
+
+/* محتوای داخل Hero */
 .hero-content {
+    position: relative; /* تا روی overlay قرار بگیره */
     max-width: 800px;
     padding: 0 20px;
+    z-index: 1;
 }
 
 .hero-content h1 {
     font-size: 3rem;
     margin-bottom: 1rem;
-    /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); */
+    font-weight: bold;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
 }
 
 .hero-content p {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     margin-bottom: 2rem;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
 }
 
+/* دکمه Hero */
 .hero-btn {
-    padding: 12px 30px;
+    padding: 14px 32px;
     font-size: 1.1rem;
     background-color: #c1b086;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }
 
 .hero-btn:hover {
     background-color: #6b3410;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.35);
+}
+
+/* ریسپانسیو موبایل */
+@media (max-width: 768px) {
+    .hero {
+         /* تصویر موبایل */
+        /* background-image: url('http://localhost:5000/uploads/default-mobile.jpg'); */
+        height: 70vh;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .hero-btn {
+        padding: 10px 24px;
+        font-size: 1rem;
+    }
 }

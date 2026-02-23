@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import HeaderAdmin from './pages/admin/HeaderManagement';
 import FurnitureStore from './pages/FurnitureStore';
+import AdminPage from './pages/AdminPage';
 
 // کامپوننت محافظت از مسیر
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -29,7 +30,7 @@ function App() {
         {/* صفحات ادمین - نیاز به توکن */}
         <Route path="/admin" element={
           <ProtectedRoute>
-            <AdminDashboard />
+            <AdminPage />
           </ProtectedRoute>
         }>
           <Route index element={<div>به پنل مدیریت خوش آمدید</div>} />

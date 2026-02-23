@@ -1,49 +1,59 @@
-// LoginPage.tsx
-import React, { useState, FormEvent } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as FaIcons from "react-icons/fa";
 import "../styles/login.css";
-const HOST_URL = !!process.env.REACT_APP_HOST_URL ? process.env.REACT_APP_HOST_URL : '';
 
-// Define interface for login response
 interface LoginResponse {
   token: string;
   message?: string;
 }
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+
   const navigate = useNavigate();
+
+  // اگر قبلا لاگین کرده بود مستقیم بفرست ادمین
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/admin");
+    }
+  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
+      const response = await fetch("/api/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ username, password }),
       });
 
-      const data = await response.json();
-      console.log('Response:', data);
+      const data: LoginResponse = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "نام کاربری یا رمز اشتباه است");
+      }
 
       if (data.token) {
-        localStorage.setItem('token', data.token);
-        // ریدایرکت به صفحه ادمین
-        window.location.href = '/admin'; // یا useNavigate()
+        localStorage.setItem("token", data.token);
+        navigate("/admin");
       } else {
-        setError('خطا در دریافت توکن');
+        throw new Error("توکن دریافت نشد");
       }
-    } catch (error) {
-      console.error('Error:', error);
-      setError('خطا در ارتباط با سرور');
+    } catch (err: any) {
+      setError(err.message || "خطا در ارتباط با سرور");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,7 +71,7 @@ const LoginPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Error Message */}
+        {/* Error */}
         {error && (
           <div className="error-message">
             <FaIcons.FaLock />
@@ -69,20 +79,20 @@ const LoginPage: React.FC = () => {
           </div>
         )}
 
-        {/* Login Form */}
+        {/* Form */}
         <form className="login-form" onSubmit={handleLogin}>
           <div className="form-group">
-            <label htmlFor="email">
+            <label htmlFor="username">
               <FaIcons.FaUser className="form-icon" />
               نام کاربری
             </label>
             <input
               type="text"
-              id="email"
+              id="username"
               className="form-input"
               placeholder="نام کاربری خود را وارد کنید"
-              value={email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               disabled={loading}
             />
@@ -100,7 +110,7 @@ const LoginPage: React.FC = () => {
               className="form-input"
               placeholder="کلمه عبور خود را وارد کنید"
               value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               required
               disabled={loading}
             />

@@ -1,0 +1,107 @@
+/* Container */
+.hero-upload-container {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  max-width: 700px;
+  margin: 0 auto;
+  transition: transform 0.2s ease;
+}
+.hero-upload-container:hover {
+  transform: translateY(-3px);
+}
+
+/* عنوان */
+.hero-upload-container h3 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  color: #1e293b;
+  border-bottom: 2px solid #2563eb;
+  padding-bottom: 8px;
+}
+
+/* File input */
+.hero-upload-container label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+  color: #0f172a;
+}
+
+.hero-upload-container input[type="file"] {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.hero-upload-container input[type="file"]:hover {
+  border-color: #2563eb;
+}
+
+/* پیش نمایش تصویر */
+.hero-upload-container .preview {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.hero-upload-container .preview img {
+  border-radius: 12px;
+  border: 2px solid #d1d5db;
+  max-height: 150px;
+  object-fit: cover;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-upload-container .preview img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* دکمه آپلود */
+.hero-upload-container button {
+  background: #2563eb;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hero-upload-container button:hover {
+  background: #1e40af;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* تصویر فعلی */
+.hero-upload-container .current-images {
+  margin-top: 24px;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.hero-upload-container .current-images img {
+  border-radius: 12px;
+  border: 2px solid #d1d5db;
+  object-fit: cover;
+  max-height: 150px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-upload-container .current-images img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
