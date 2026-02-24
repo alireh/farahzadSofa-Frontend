@@ -1,0 +1,163 @@
+.admin-faq-box {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    margin-top: 24px;
+    direction: rtl;
+}
+
+/* title */
+.admin-faq-box h3 {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #333;
+}
+
+/* form */
+.faq-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+/* input */
+.faq-form input,
+.faq-form textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-family: inherit;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    background: #fafafa;
+}
+
+.faq-form textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+/* focus state */
+.faq-form input:focus,
+.faq-form textarea:focus {
+    outline: none;
+    border-color: #4f46e5;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
+}
+
+/* submit button */
+.faq-form button {
+    align-self: flex-start;
+    padding: 10px 22px;
+    border-radius: 10px;
+    border: none;
+    background: #4f46e5;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.faq-form button:hover {
+    background: #4338ca;
+    transform: translateY(-1px);
+}
+
+/* list */
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* item */
+.faq-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    background: #fafafa;
+    transition: all 0.2s ease;
+}
+
+.faq-item:hover {
+    background: #f5f7ff;
+    border-color: #e0e7ff;
+}
+
+/* text side */
+.faq-item strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #222;
+    font-size: 15px;
+}
+
+.faq-item p {
+    margin: 0;
+    color: #555;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+/* buttons container */
+.faq-item>div:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* edit button */
+.faq-item button {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+/* edit */
+.faq-item button:first-child {
+    background: #10b981;
+    color: #fff;
+}
+
+.faq-item button:first-child:hover {
+    background: #059669;
+}
+
+/* delete */
+.faq-item button:last-child {
+    background: #ef4444;
+    color: #fff;
+}
+
+.faq-item button:last-child:hover {
+    background: #dc2626;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+    .faq-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .faq-item>div:last-child {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .faq-form button {
+        width: 100%;
+    }
+}

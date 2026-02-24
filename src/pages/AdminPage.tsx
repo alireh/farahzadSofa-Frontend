@@ -4,6 +4,7 @@ import Modal from "../component2/Modal";
 import "../style2/adminPage.css";
 import "../style2/admin-hero.css";
 import "../style2/admin-collection.css";
+import "../style2/AdminFaq.css";
 
 interface MenuItem {
   id: number;
@@ -24,11 +25,17 @@ interface CollectionItem {
   mobile_image: string;
 }
 
+interface FaqItem {
+  id: number;
+  question: string;
+  answer: string;
+}
+
 const AdminPage: React.FC = () => {
   const token = localStorage.getItem("token");
 
   // تب‌ها
-  const [activeTab, setActiveTab] = useState<"menu" | "hero" | "collection" | "subCollection" | "bestSeller">(
+  const [activeTab, setActiveTab] = useState<"menu" | "hero" | "collection" | "subCollection" | "bestSeller" | "faq">(
     "menu"
   );
 
@@ -59,7 +66,6 @@ const AdminPage: React.FC = () => {
   const [editingSubId, setEditingSubId] = useState<number | null>(null);
 
 
-  // ===== Best Sellers states =====
   // ===== Best Seller states =====
   const [bestSellers, setBestSellers] = useState<any[]>([]);
   const [bsTitle, setBsTitle] = useState("");
@@ -67,6 +73,13 @@ const AdminPage: React.FC = () => {
   const [bsRating, setBsRating] = useState<number>(0);
   const [bsImage, setBsImage] = useState<File | null>(null);
   const [editingBsId, setEditingBsId] = useState<number | null>(null);
+
+
+  // ===== Faq states =====
+  const [faqs, setFaqs] = useState<FaqItem[]>([]);
+  const [faqQuestion, setFaqQuestion] = useState("");
+  const [faqAnswer, setFaqAnswer] = useState("");
+  const [editingFaqId, setEditingFaqId] = useState<number | null>(null);
 
   // ===== Protect admin =====
   useEffect(() => {
@@ -78,6 +91,7 @@ const AdminPage: React.FC = () => {
     fetchHero();
     fetchCollections();
     fetchBestSellers();
+    fetchFaqs();
   }, []);
 
   // ===== Menu CRUD =====
@@ -400,6 +414,77 @@ const AdminPage: React.FC = () => {
     setBestSellers((prev) => prev.filter((x) => x.id !== id));
   };
 
+
+  const fetchFaqs = () => {
+    fetch("/api/common_questions")
+      .then(r => r.json())
+      .then(setFaqs);
+  };
+
+
+  const addFaq = async () => {
+    const res = await fetch("/api/common_questions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        question: faqQuestion,
+        answer: faqAnswer,
+      }),
+    });
+
+    const newItem = await res.json();
+    setFaqs(prev => [newItem, ...prev]);
+    setFaqQuestion("");
+    setFaqAnswer("");
+  };
+
+
+  const editFaq = (item: FaqItem) => {
+    setEditingFaqId(item.id);
+    setFaqQuestion(item.question);
+    setFaqAnswer(item.answer);
+  };
+
+
+  const saveEditFaq = async () => {
+    if (!editingFaqId) return;
+
+    const res = await fetch(`/api/common_questions/${editingFaqId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        question: faqQuestion,
+        answer: faqAnswer,
+      }),
+    });
+
+    const updated = await res.json();
+
+    setFaqs(prev =>
+      prev.map(x => (x.id === editingFaqId ? updated : x))
+    );
+
+    setEditingFaqId(null);
+    setFaqQuestion("");
+    setFaqAnswer("");
+    fetchFaqs();
+  };
+
+  const deleteFaq = async (id: number) => {
+    await fetch(`/api/common_questions/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setFaqs(prev => prev.filter(x => x.id !== id));
+  };
+
   return (
     <div className="admin-layout">
       {/* Sidebar */}
@@ -422,6 +507,12 @@ const AdminPage: React.FC = () => {
             onClick={() => setActiveTab("bestSeller")}
           >
             مدیریت محصولات پرفروش
+          </li>
+          <li
+            className={activeTab === "faq" ? "active" : ""}
+            onClick={() => setActiveTab("faq")}
+          >
+            مدیریت سوالات متداول
           </li>
         </ul>
       </aside>
@@ -683,6 +774,49 @@ const AdminPage: React.FC = () => {
                   <div>
                     <button onClick={() => editBestSeller(s)}>ویرایش</button>
                     <button onClick={() => deleteBestSeller(s.id)}>حذف</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+
+
+
+        {activeTab === "faq" && (
+          <div className="admin-faq-box">
+            <h3>مدیریت سوالات متداول</h3>
+
+            <div className="faq-form">
+              <input
+                placeholder="سوال"
+                value={faqQuestion}
+                onChange={(e) => setFaqQuestion(e.target.value)}
+              />
+
+              <textarea
+                placeholder="پاسخ"
+                value={faqAnswer}
+                onChange={(e) => setFaqAnswer(e.target.value)}
+              />
+
+              <button onClick={editingFaqId ? saveEditFaq : addFaq}>
+                {editingFaqId ? "💾 ذخیره" : "➕ افزودن"}
+              </button>
+            </div>
+
+            <div className="faq-list">
+              {faqs.map((f) => (
+                <div key={f.id} className="faq-item">
+                  <div>
+                    <strong>{f.question}</strong>
+                    <p>{f.answer}</p>
+                  </div>
+
+                  <div>
+                    <button onClick={() => editFaq(f)}>ویرایش</button>
+                    <button onClick={() => deleteFaq(f.id)}>حذف</button>
                   </div>
                 </div>
               ))}
