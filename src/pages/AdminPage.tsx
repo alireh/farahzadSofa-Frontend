@@ -28,7 +28,7 @@ const AdminPage: React.FC = () => {
   const token = localStorage.getItem("token");
 
   // تب‌ها
-  const [activeTab, setActiveTab] = useState<"menu" | "hero" | "collection" | "subCollection">(
+  const [activeTab, setActiveTab] = useState<"menu" | "hero" | "collection" | "subCollection" | "bestSeller">(
     "menu"
   );
 
@@ -58,6 +58,16 @@ const AdminPage: React.FC = () => {
   const [subImage, setSubImage] = useState<File | null>(null);
   const [editingSubId, setEditingSubId] = useState<number | null>(null);
 
+
+  // ===== Best Sellers states =====
+  // ===== Best Seller states =====
+  const [bestSellers, setBestSellers] = useState<any[]>([]);
+  const [bsTitle, setBsTitle] = useState("");
+  const [bsPrice, setBsPrice] = useState<number>(0);
+  const [bsRating, setBsRating] = useState<number>(0);
+  const [bsImage, setBsImage] = useState<File | null>(null);
+  const [editingBsId, setEditingBsId] = useState<number | null>(null);
+
   // ===== Protect admin =====
   useEffect(() => {
     if (!token) {
@@ -67,6 +77,7 @@ const AdminPage: React.FC = () => {
     fetchMenu();
     fetchHero();
     fetchCollections();
+    fetchBestSellers();
   }, []);
 
   // ===== Menu CRUD =====
@@ -325,6 +336,70 @@ const AdminPage: React.FC = () => {
     setSubCollections((prev) => prev.filter((x) => x.id !== id));
   };
 
+
+  // ===== BestSellers CRUD =====
+  const fetchBestSellers = async () => {
+    const res = await fetch("/api/best-sellers");
+    const data = await res.json();
+    setBestSellers(data);
+  };
+  const addBestSeller = async () => {
+    const formData = new FormData();
+    formData.append("title", bsTitle);
+    formData.append("price", String(bsPrice));
+    formData.append("rating", String(bsRating));
+    if (bsImage) formData.append("image", bsImage);
+
+    await fetch("/api/best-sellers", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+
+    setBsTitle("");
+    setBsPrice(0);
+    setBsRating(0);
+    setBsImage(null);
+    fetchBestSellers();
+  };
+  const editBestSeller = (item: any) => {
+    setEditingBsId(item.id);
+    setBsTitle(item.title);
+    setBsPrice(item.price);
+    setBsRating(item.rating);
+  };
+  const saveEditBestSeller = async () => {
+    if (!editingBsId) return;
+
+    const formData = new FormData();
+    formData.append("title", bsTitle);
+    formData.append("price", String(bsPrice));
+    formData.append("rating", String(bsRating));
+    if (bsImage) formData.append("image", bsImage);
+
+    await fetch(`/api/best-sellers/${editingBsId}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+
+    setEditingBsId(null);
+    setBsTitle("");
+    setBsPrice(0);
+    setBsRating(0);
+    setBsImage(null);
+    fetchBestSellers();
+  };
+
+  const deleteBestSeller = async (id: number) => {
+    await fetch(`/api/best-sellers/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setBestSellers((prev) => prev.filter((x) => x.id !== id));
+  };
+
   return (
     <div className="admin-layout">
       {/* Sidebar */}
@@ -341,6 +416,12 @@ const AdminPage: React.FC = () => {
           </li>
           <li className={activeTab === "subCollection" ? "active" : ""} onClick={() => setActiveTab("subCollection")}>
             مدیریت زیرکالکشن‌ها
+          </li>
+          <li
+            className={activeTab === "bestSeller" ? "active" : ""}
+            onClick={() => setActiveTab("bestSeller")}
+          >
+            مدیریت محصولات پرفروش
           </li>
         </ul>
       </aside>
@@ -527,6 +608,82 @@ const AdminPage: React.FC = () => {
                     <button onClick={() => deleteSubCollection(s.id)}>حذف</button>
                   </div>
 
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+
+
+
+        {/* ----- Collection Tab ----- */}
+        {activeTab === "bestSeller" && (
+          <div className="admin-bestseller-box">
+            <h3>مدیریت محصولات پرفروش</h3>
+
+            {/* فرم */}
+            <div className="subcollection-form">
+              <input
+                placeholder="عنوان"
+                value={bsTitle}
+                onChange={(e) => setBsTitle(e.target.value)}
+              />
+
+              <input
+                type="number"
+                placeholder="قیمت"
+                value={bsPrice}
+                onChange={(e) => setBsPrice(Number(e.target.value))}
+              />
+
+              <input
+                type="number"
+                step="0.1"
+                placeholder="امتیاز"
+                value={bsRating}
+                onChange={(e) => setBsRating(Number(e.target.value))}
+              />
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  setBsImage(e.target.files ? e.target.files[0] : null)
+                }
+              />
+
+              <button
+                onClick={editingBsId ? saveEditBestSeller : addBestSeller}
+              >
+                {editingBsId ? "💾 ذخیره" : "➕ افزودن"}
+              </button>
+            </div>
+
+            {/* لیست */}
+            <div className="subcollection-list">
+              {bestSellers.map((s) => (
+                <div key={s.id} className="subcollection-item">
+                  <div className="subcollection-info">
+                    <img
+                      src={s.image}
+                      alt={s.title}
+                      className="subcollection-thumb"
+                    />
+
+                    <div>
+                      <div className="sub-name">{s.title}</div>
+                      <div className="sub-price">
+                        {s.price?.toLocaleString("fa-IR")} تومان
+                      </div>
+                      <div>⭐ {s.rating}</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <button onClick={() => editBestSeller(s)}>ویرایش</button>
+                    <button onClick={() => deleteBestSeller(s.id)}>حذف</button>
+                  </div>
                 </div>
               ))}
             </div>
