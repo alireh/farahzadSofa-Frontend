@@ -634,7 +634,7 @@ const AdminPage: React.FC = () => {
   const fetchFooter = async () => {
     try {
       const res = await fetch("/api/footer", {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       setFooterForm(data);
@@ -1160,197 +1160,249 @@ const AdminPage: React.FC = () => {
         )}
 
         {activeTab === "footer" && (
-  <div className="admin-articles-box admin-footer-box">
-    <h3>مدیریت فوتر</h3>
+          <div className="admin-articles-box admin-footer-box">
+            <h3>مدیریت فوتر</h3>
 
-    {/* لینک‌های مفید */}
-    <h4>لینک‌های مفید</h4>
-    <div className="article-list">
-      {footerForm.useful_links?.map((l, idx) => (
-        <div key={l.id} className="article-item">
-          <div className="article-info">
+            {/* لینک‌های مفید */}
+            <h4>لینک‌های مفید</h4>
+            <div className="article-list">
+              {footerForm.useful_links?.map((l, idx) => (
+                <div key={l.id} className="article-item">
+                  <div className="article-info">
+                    <input
+                      placeholder="عنوان لینک"
+                      value={l.title}
+                      onChange={(e) => {
+                        const newLinks = [...footerForm.useful_links];
+                        newLinks[idx].title = e.target.value;
+                        setFooterForm({
+                          ...footerForm,
+                          useful_links: newLinks,
+                        });
+                      }}
+                    />
+                    <input
+                      placeholder="آدرس لینک"
+                      value={l.url}
+                      onChange={(e) => {
+                        const newLinks = [...footerForm.useful_links];
+                        newLinks[idx].url = e.target.value;
+                        setFooterForm({
+                          ...footerForm,
+                          useful_links: newLinks,
+                        });
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => {
+                        const newLinks = footerForm.useful_links.filter(
+                          (_, i) => i !== idx,
+                        );
+                        setFooterForm({
+                          ...footerForm,
+                          useful_links: newLinks,
+                        });
+                      }}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                onClick={() =>
+                  setFooterForm({
+                    ...footerForm,
+                    useful_links: [
+                      ...footerForm.useful_links,
+                      { id: Date.now(), title: "", url: "" },
+                    ],
+                  })
+                }
+              >
+                ➕ لینک جدید
+              </button>
+            </div>
+
+            {/* شبکه‌های اجتماعی */}
+            <h4>شبکه‌های اجتماعی</h4>
+            <div className="article-list">
+              {footerForm.socials?.map((s, idx) => (
+                <div key={s.id} className="article-item">
+                  <div className="article-info">
+                    {s.icon && (
+                      <img
+                        src={s.icon}
+                        alt="icon"
+                        style={{ width: 40, height: 40, borderRadius: 6 }}
+                      />
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = () => {
+                            const newSocials = [...footerForm.socials];
+                            newSocials[idx].icon = reader.result as string;
+                            setFooterForm({
+                              ...footerForm,
+                              socials: newSocials,
+                            });
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                    <input
+                      placeholder="لینک شبکه"
+                      value={s.url}
+                      onChange={(e) => {
+                        const newSocials = [...footerForm.socials];
+                        newSocials[idx].url = e.target.value;
+                        setFooterForm({ ...footerForm, socials: newSocials });
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => {
+                        const newSocials = footerForm.socials.filter(
+                          (_, i) => i !== idx,
+                        );
+                        setFooterForm({ ...footerForm, socials: newSocials });
+                      }}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                onClick={() =>
+                  setFooterForm({
+                    ...footerForm,
+                    socials: [
+                      ...footerForm.socials,
+                      { id: Date.now(), icon: "", url: "" },
+                    ],
+                  })
+                }
+              >
+                ➕ شبکه جدید
+              </button>
+            </div>
+
+            {/* درباره ما */}
+            <textarea
+              placeholder="درباره ما"
+              value={footerForm.about_text}
+              onChange={(e) =>
+                setFooterForm({ ...footerForm, about_text: e.target.value })
+              }
+            />
+
+            {/* اطلاعات تماس */}
             <input
-              placeholder="عنوان لینک"
-              value={l.title}
-              onChange={(e) => {
-                const newLinks = [...footerForm.useful_links];
-                newLinks[idx].title = e.target.value;
-                setFooterForm({ ...footerForm, useful_links: newLinks });
-              }}
+              placeholder="آدرس"
+              value={footerForm.address}
+              onChange={(e) =>
+                setFooterForm({ ...footerForm, address: e.target.value })
+              }
             />
             <input
-              placeholder="آدرس لینک"
-              value={l.url}
-              onChange={(e) => {
-                const newLinks = [...footerForm.useful_links];
-                newLinks[idx].url = e.target.value;
-                setFooterForm({ ...footerForm, useful_links: newLinks });
-              }}
-            />
-          </div>
-          <div>
-            <button
-              onClick={() => {
-                const newLinks = footerForm.useful_links.filter((_, i) => i !== idx);
-                setFooterForm({ ...footerForm, useful_links: newLinks });
-              }}
-            >
-              🗑️
-            </button>
-          </div>
-        </div>
-      ))}
-      <button
-        onClick={() =>
-          setFooterForm({
-            ...footerForm,
-            useful_links: [
-              ...footerForm.useful_links,
-              { id: Date.now(), title: "", url: "" },
-            ],
-          })
-        }
-      >
-        ➕ لینک جدید
-      </button>
-    </div>
-
-    {/* شبکه‌های اجتماعی */}
-    <h4>شبکه‌های اجتماعی</h4>
-    <div className="article-list">
-      {footerForm.socials?.map((s, idx) => (
-        <div key={s.id} className="article-item">
-          <div className="article-info">
-            <input
-              placeholder="آیکون (مثلا 📱)"
-              value={s.icon}
-              onChange={(e) => {
-                const newSocial = [...footerForm.socials];
-                newSocial[idx].icon = e.target.value;
-                setFooterForm({ ...footerForm, socials: newSocial });
-              }}
+              placeholder="تلفن ثابت"
+              value={footerForm.phone}
+              onChange={(e) =>
+                setFooterForm({ ...footerForm, phone: e.target.value })
+              }
             />
             <input
-              placeholder="لینک شبکه"
-              value={s.url}
-              onChange={(e) => {
-                const newSocial = [...footerForm.socials];
-                newSocial[idx].url = e.target.value;
-                setFooterForm({ ...footerForm, socials: newSocial });
-              }}
-            />
-          </div>
-          <div>
-            <button
-              onClick={() => {
-                const newSocial = footerForm.socials.filter((_, i) => i !== idx);
-                setFooterForm({ ...footerForm, socials: newSocial });
-              }}
-            >
-              🗑️
-            </button>
-          </div>
-        </div>
-      ))}
-      <button
-        onClick={() =>
-          setFooterForm({
-            ...footerForm,
-            socials: [...footerForm.socials, { id: Date.now(), icon: "", url: "" }],
-          })
-        }
-      >
-        ➕ شبکه جدید
-      </button>
-    </div>
-
-    {/* درباره ما */}
-    <textarea
-      placeholder="درباره ما"
-      value={footerForm.about_text}
-      onChange={(e) =>
-        setFooterForm({ ...footerForm, about_text: e.target.value })
-      }
-    />
-
-    {/* اطلاعات تماس */}
-    <input
-      placeholder="آدرس"
-      value={footerForm.address}
-      onChange={(e) => setFooterForm({ ...footerForm, address: e.target.value })}
-    />
-    <input
-      placeholder="تلفن ثابت"
-      value={footerForm.phone}
-      onChange={(e) => setFooterForm({ ...footerForm, phone: e.target.value })}
-    />
-    <input
-      placeholder="موبایل"
-      value={footerForm.mobile}
-      onChange={(e) => setFooterForm({ ...footerForm, mobile: e.target.value })}
-    />
-    <input
-      placeholder="ایمیل"
-      value={footerForm.email}
-      onChange={(e) => setFooterForm({ ...footerForm, email: e.target.value })}
-    />
-
-    {/* ساعات کاری */}
-    <h4>ساعات کاری</h4>
-    <div className="article-list">
-      {footerForm.working_hours?.map((w, idx) => (
-        <div key={w.id} className="article-item">
-          <div className="article-info">
-            <input
-              placeholder="روز"
-              value={w.day}
-              onChange={(e) => {
-                const newHours = [...footerForm.working_hours];
-                newHours[idx].day = e.target.value;
-                setFooterForm({ ...footerForm, working_hours: newHours });
-              }}
+              placeholder="موبایل"
+              value={footerForm.mobile}
+              onChange={(e) =>
+                setFooterForm({ ...footerForm, mobile: e.target.value })
+              }
             />
             <input
-              placeholder="ساعت"
-              value={w.time}
-              onChange={(e) => {
-                const newHours = [...footerForm.working_hours];
-                newHours[idx].time = e.target.value;
-                setFooterForm({ ...footerForm, working_hours: newHours });
-              }}
+              placeholder="ایمیل"
+              value={footerForm.email}
+              onChange={(e) =>
+                setFooterForm({ ...footerForm, email: e.target.value })
+              }
             />
-          </div>
-          <div>
-            <button
-              onClick={() => {
-                const newHours = footerForm.working_hours.filter((_, i) => i !== idx);
-                setFooterForm({ ...footerForm, working_hours: newHours });
-              }}
-            >
-              🗑️
-            </button>
-          </div>
-        </div>
-      ))}
-      <button
-        onClick={() =>
-          setFooterForm({
-            ...footerForm,
-            working_hours: [
-              ...footerForm.working_hours,
-              { id: Date.now(), day: "", time: "" },
-            ],
-          })
-        }
-      >
-        ➕ ساعت جدید
-      </button>
-    </div>
 
-    {/* ذخیره */}
-    <button onClick={saveFooter}>💾 ذخیره تغییرات</button>
-  </div>
-)}
+            {/* ساعات کاری */}
+            <h4>ساعات کاری</h4>
+            <div className="article-list">
+              {footerForm.working_hours?.map((w, idx) => (
+                <div key={w.id} className="article-item">
+                  <div className="article-info">
+                    <input
+                      placeholder="روز"
+                      value={w.day}
+                      onChange={(e) => {
+                        const newHours = [...footerForm.working_hours];
+                        newHours[idx].day = e.target.value;
+                        setFooterForm({
+                          ...footerForm,
+                          working_hours: newHours,
+                        });
+                      }}
+                    />
+                    <input
+                      placeholder="ساعت"
+                      value={w.time}
+                      onChange={(e) => {
+                        const newHours = [...footerForm.working_hours];
+                        newHours[idx].time = e.target.value;
+                        setFooterForm({
+                          ...footerForm,
+                          working_hours: newHours,
+                        });
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => {
+                        const newHours = footerForm.working_hours.filter(
+                          (_, i) => i !== idx,
+                        );
+                        setFooterForm({
+                          ...footerForm,
+                          working_hours: newHours,
+                        });
+                      }}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                onClick={() =>
+                  setFooterForm({
+                    ...footerForm,
+                    working_hours: [
+                      ...footerForm.working_hours,
+                      { id: Date.now(), day: "", time: "" },
+                    ],
+                  })
+                }
+              >
+                ➕ ساعت جدید
+              </button>
+            </div>
+
+            {/* ذخیره */}
+            <button onClick={saveFooter}>💾 ذخیره تغییرات</button>
+          </div>
+        )}
       </main>
     </div>
   );
