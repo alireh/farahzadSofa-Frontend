@@ -2,21 +2,24 @@
 import React, { useEffect } from 'react';
 import '../style2/ArticleModal.css';
 
+interface Article {
+  id: number;
+  title: string;
+  summary: string;
+  image: string;
+  desktop_image: string;
+  mobile_image: string;
+  author: string;
+  read_time: string;
+  category: string;
+  full_content?: string;
+  created_at: string;
+}
+
 interface ArticleModalProps {
+  article: Article | null;
   isOpen: boolean;
   onClose: () => void;
-  article: {
-    title: string;
-    summary: string;
-    image: string;
-    desktopImage: string;
-    mobileImage: string;
-    date: string;
-    author: string;
-    readTime: string;
-    category: string;
-    fullContent?: string;
-  } | null;
 }
 
 const ArticleModal: React.FC<ArticleModalProps> = ({ isOpen, onClose, article }) => {
@@ -42,7 +45,7 @@ const ArticleModal: React.FC<ArticleModalProps> = ({ isOpen, onClose, article })
 
   // محتوای کامل مقاله (برای نمایش در پاپ‌آپ)
   const getFullContent = () => {
-    if (article.fullContent) return article.fullContent;
+    if (article.summary) return article.summary;
 
     // محتوای پیش‌فرض بر اساس دسته‌بندی
     const contents: { [key: string]: string } = {
@@ -123,8 +126,8 @@ const ArticleModal: React.FC<ArticleModalProps> = ({ isOpen, onClose, article })
         <div className="modal-content">
           <div className="modal-image">
             <picture>
-              <source media="(max-width: 768px)" srcSet={article.mobileImage} />
-              <source media="(min-width: 769px)" srcSet={article.desktopImage} />
+              <source media="(max-width: 768px)" srcSet={article.mobile_image} />
+              <source media="(min-width: 769px)" srcSet={article.desktop_image} />
               <img src={article.image} alt={article.title} />
             </picture>
             <span className="modal-category">{article.category}</span>
@@ -134,17 +137,17 @@ const ArticleModal: React.FC<ArticleModalProps> = ({ isOpen, onClose, article })
             <h2 className="modal-title">{article.title}</h2>
             
             <div className="modal-meta">
-              <span className="meta-item">
+              {/* <span className="meta-item">
                 <span className="meta-icon">✍️</span>
                 {article.author}
               </span>
               <span className="meta-item">
                 <span className="meta-icon">📅</span>
-                {article.date}
-              </span>
+                {article.created_at}
+              </span> */}
               <span className="meta-item">
                 <span className="meta-icon">⏱️</span>
-                {article.readTime} مطالعه
+                {article.read_time} مطالعه
               </span>
             </div>
             

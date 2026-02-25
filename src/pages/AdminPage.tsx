@@ -5,6 +5,7 @@ import "../style2/adminPage.css";
 import "../style2/admin-hero.css";
 import "../style2/admin-collection.css";
 import "../style2/AdminFaq.css";
+import "../style2/AdminArticles.css";
 
 interface MenuItem {
   id: number;
@@ -30,14 +31,33 @@ interface FaqItem {
   question: string;
   answer: string;
 }
+interface ArticleItem {
+  id: number;
+  title: string;
+  summary: string;
+  image: string;
+  desktop_image: string;
+  mobile_image: string;
+  author: string;
+  read_time: string;
+  category: string;
+  full_content?: string;
+  created_at: string;
+}
 
 const AdminPage: React.FC = () => {
   const token = localStorage.getItem("token");
 
   // تب‌ها
-  const [activeTab, setActiveTab] = useState<"menu" | "hero" | "collection" | "subCollection" | "bestSeller" | "faq">(
-    "menu"
-  );
+  const [activeTab, setActiveTab] = useState<
+    | "menu"
+    | "hero"
+    | "collection"
+    | "subCollection"
+    | "bestSeller"
+    | "faq"
+    | "articles"
+  >("menu");
 
   // ===== Menu states =====
   const [items, setItems] = useState<MenuItem[]>([]);
@@ -65,7 +85,6 @@ const AdminPage: React.FC = () => {
   const [subImage, setSubImage] = useState<File | null>(null);
   const [editingSubId, setEditingSubId] = useState<number | null>(null);
 
-
   // ===== Best Seller states =====
   const [bestSellers, setBestSellers] = useState<any[]>([]);
   const [bsTitle, setBsTitle] = useState("");
@@ -74,12 +93,24 @@ const AdminPage: React.FC = () => {
   const [bsImage, setBsImage] = useState<File | null>(null);
   const [editingBsId, setEditingBsId] = useState<number | null>(null);
 
-
   // ===== Faq states =====
   const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [faqQuestion, setFaqQuestion] = useState("");
   const [faqAnswer, setFaqAnswer] = useState("");
   const [editingFaqId, setEditingFaqId] = useState<number | null>(null);
+
+  // ===== Articles states =====
+  const [articles, setArticles] = useState<ArticleItem[]>([]);
+  const [articleTitle, setArticleTitle] = useState("");
+  const [articleSummary, setArticleSummary] = useState("");
+  const [articleAuthor, setArticleAuthor] = useState("");
+  const [articleReadTime, setArticleReadTime] = useState("");
+  const [articleCategory, setArticleCategory] = useState("");
+  const [articleContent, setArticleContent] = useState("");
+  const [articleImage, setArticleImage] = useState<File | null>(null);
+  const [articleDesktop, setArticleDesktop] = useState<File | null>(null);
+  const [articleMobile, setArticleMobile] = useState<File | null>(null);
+  const [editingArticleId, setEditingArticleId] = useState<number | null>(null);
 
   // ===== Protect admin =====
   useEffect(() => {
@@ -92,6 +123,7 @@ const AdminPage: React.FC = () => {
     fetchCollections();
     fetchBestSellers();
     fetchFaqs();
+    fetchArticles();
   }, []);
 
   // ===== Menu CRUD =====
@@ -204,7 +236,8 @@ const AdminPage: React.FC = () => {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-        }, body: formData
+        },
+        body: formData,
       });
       const newCollection = await res.json();
       setCollections([...collections, newCollection]);
@@ -240,7 +273,7 @@ const AdminPage: React.FC = () => {
       });
       const updated = await res.json();
       setCollections(
-        collections.map((c) => (c.id === editingId ? updated : c))
+        collections.map((c) => (c.id === editingId ? updated : c)),
       );
       setEditingId(null);
       setTitle("");
@@ -260,7 +293,7 @@ const AdminPage: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-        }
+        },
       });
       setCollections(collections.filter((c) => c.id !== id));
     } catch (err) {
@@ -344,12 +377,11 @@ const AdminPage: React.FC = () => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-      }
+      },
     });
 
     setSubCollections((prev) => prev.filter((x) => x.id !== id));
   };
-
 
   // ===== BestSellers CRUD =====
   const fetchBestSellers = async () => {
@@ -414,13 +446,27 @@ const AdminPage: React.FC = () => {
     setBestSellers((prev) => prev.filter((x) => x.id !== id));
   };
 
-
   const fetchFaqs = () => {
     fetch("/api/common_questions")
-      .then(r => r.json())
+      .then((r) => r.json())
       .then(setFaqs);
   };
 
+  const fetchArticles = async () => {
+  try {
+    const res = await fetch("/api/articles/admin", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }); // از مسیر admin استفاده کن
+    const data = await res.json();
+    setArticles(data);
+  } catch (err) {
+    console.error("Error fetching articles:", err);
+  }
+};
 
   const addFaq = async () => {
     const res = await fetch("/api/common_questions", {
@@ -436,18 +482,16 @@ const AdminPage: React.FC = () => {
     });
 
     const newItem = await res.json();
-    setFaqs(prev => [newItem, ...prev]);
+    setFaqs((prev) => [newItem, ...prev]);
     setFaqQuestion("");
     setFaqAnswer("");
   };
-
 
   const editFaq = (item: FaqItem) => {
     setEditingFaqId(item.id);
     setFaqQuestion(item.question);
     setFaqAnswer(item.answer);
   };
-
 
   const saveEditFaq = async () => {
     if (!editingFaqId) return;
@@ -466,9 +510,7 @@ const AdminPage: React.FC = () => {
 
     const updated = await res.json();
 
-    setFaqs(prev =>
-      prev.map(x => (x.id === editingFaqId ? updated : x))
-    );
+    setFaqs((prev) => prev.map((x) => (x.id === editingFaqId ? updated : x)));
 
     setEditingFaqId(null);
     setFaqQuestion("");
@@ -482,7 +524,87 @@ const AdminPage: React.FC = () => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    setFaqs(prev => prev.filter(x => x.id !== id));
+    setFaqs((prev) => prev.filter((x) => x.id !== id));
+  };
+
+  const addArticle = async () => {
+    const formData = new FormData();
+    formData.append("title", articleTitle);
+    formData.append("summary", articleSummary);
+    formData.append("author", articleAuthor);
+    formData.append("read_time", articleReadTime);
+    formData.append("category", articleCategory);
+    formData.append("full_content", articleContent);
+
+    if (articleImage) formData.append("image", articleImage);
+    if (articleDesktop) formData.append("desktop", articleDesktop);
+    if (articleMobile) formData.append("mobile", articleMobile);
+
+    await fetch("/api/articles", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+
+    resetArticleForm();
+    fetchArticles();
+  };
+
+  const saveEditArticle = async () => {
+    if (!editingArticleId) return;
+
+    const formData = new FormData();
+    formData.append("title", articleTitle);
+    formData.append("summary", articleSummary);
+    formData.append("author", articleAuthor);
+    formData.append("read_time", articleReadTime);
+    formData.append("category", articleCategory);
+    formData.append("full_content", articleContent);
+
+    if (articleImage) formData.append("image", articleImage);
+    if (articleDesktop) formData.append("desktop", articleDesktop);
+    if (articleMobile) formData.append("mobile", articleMobile);
+
+    await fetch(`/api/articles/${editingArticleId}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+
+    resetArticleForm();
+    fetchArticles();
+  };
+
+  const deleteArticle = async (id: number) => {
+    await fetch(`/api/articles/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setArticles((prev) => prev.filter((x) => x.id !== id));
+  };
+
+  const resetArticleForm = () => {
+    setEditingArticleId(null);
+    setArticleTitle("");
+    setArticleSummary("");
+    setArticleAuthor("");
+    setArticleReadTime("");
+    setArticleCategory("");
+    setArticleContent("");
+    setArticleImage(null);
+    setArticleDesktop(null);
+    setArticleMobile(null);
+  };
+
+  const editArticle = (item: ArticleItem) => {
+    setEditingArticleId(item.id);
+    setArticleTitle(item.title);
+    setArticleSummary(item.summary);
+    setArticleAuthor(item.author);
+    setArticleReadTime(item.read_time);
+    setArticleCategory(item.category);
+    setArticleContent(item.full_content || "");
   };
 
   return (
@@ -490,16 +612,28 @@ const AdminPage: React.FC = () => {
       {/* Sidebar */}
       <aside className="sidebar">
         <ul>
-          <li className={activeTab === "menu" ? "active" : ""} onClick={() => setActiveTab("menu")}>
+          <li
+            className={activeTab === "menu" ? "active" : ""}
+            onClick={() => setActiveTab("menu")}
+          >
             مدیریت لینک‌های بالای سایت
           </li>
-          <li className={activeTab === "hero" ? "active" : ""} onClick={() => setActiveTab("hero")}>
+          <li
+            className={activeTab === "hero" ? "active" : ""}
+            onClick={() => setActiveTab("hero")}
+          >
             مدیریت تصویر هدر
           </li>
-          <li className={activeTab === "collection" ? "active" : ""} onClick={() => setActiveTab("collection")}>
+          <li
+            className={activeTab === "collection" ? "active" : ""}
+            onClick={() => setActiveTab("collection")}
+          >
             مدیریت کالکشن‌ها
           </li>
-          <li className={activeTab === "subCollection" ? "active" : ""} onClick={() => setActiveTab("subCollection")}>
+          <li
+            className={activeTab === "subCollection" ? "active" : ""}
+            onClick={() => setActiveTab("subCollection")}
+          >
             مدیریت زیرکالکشن‌ها
           </li>
           <li
@@ -514,6 +648,12 @@ const AdminPage: React.FC = () => {
           >
             مدیریت سوالات متداول
           </li>
+          <li
+            className={activeTab === "articles" ? "active" : ""}
+            onClick={() => setActiveTab("articles")}
+          >
+            مدیریت مقالات
+          </li>
         </ul>
       </aside>
 
@@ -524,9 +664,22 @@ const AdminPage: React.FC = () => {
           <>
             <h2>مدیریت منو</h2>
             <div className="menu-form">
-              <input placeholder="عنوان" value={title} onChange={(e) => setTitle(e.target.value)} />
-              <input placeholder="url" value={url} onChange={(e) => setUrl(e.target.value)} />
-              <input type="number" placeholder="ترتیب" value={orderIndex} onChange={(e) => setOrderIndex(Number(e.target.value))} />
+              <input
+                placeholder="عنوان"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+              <input
+                placeholder="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="ترتیب"
+                value={orderIndex}
+                onChange={(e) => setOrderIndex(Number(e.target.value))}
+              />
               <button onClick={addItem}>➕ افزودن</button>
             </div>
 
@@ -554,8 +707,16 @@ const AdminPage: React.FC = () => {
               </tbody>
             </table>
 
-            <Modal open={!!editItem} title="ویرایش آیتم" onClose={() => setEditItem(null)}>
-              <input style={{ width: "100%", marginBottom: 12 }} value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
+            <Modal
+              open={!!editItem}
+              title="ویرایش آیتم"
+              onClose={() => setEditItem(null)}
+            >
+              <input
+                style={{ width: "100%", marginBottom: 12 }}
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+              />
               <button onClick={submitEdit}>💾 ذخیره</button>
             </Modal>
           </>
@@ -565,11 +726,33 @@ const AdminPage: React.FC = () => {
         {activeTab === "hero" && (
           <div className="hero-upload-container">
             <h3>مدیریت تصویر Hero</h3>
-            <input type="file" accept="image/*" onChange={(e) => setDesktopFile(e.target.files ? e.target.files[0] : null)} />
-            <input type="file" accept="image/*" onChange={(e) => setMobileFile(e.target.files ? e.target.files[0] : null)} />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                setDesktopFile(e.target.files ? e.target.files[0] : null)
+              }
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                setMobileFile(e.target.files ? e.target.files[0] : null)
+              }
+            />
             <div className="preview">
-              {desktopFile && <img src={URL.createObjectURL(desktopFile)} alt="preview desktop" />}
-              {mobileFile && <img src={URL.createObjectURL(mobileFile)} alt="preview mobile" />}
+              {desktopFile && (
+                <img
+                  src={URL.createObjectURL(desktopFile)}
+                  alt="preview desktop"
+                />
+              )}
+              {mobileFile && (
+                <img
+                  src={URL.createObjectURL(mobileFile)}
+                  alt="preview mobile"
+                />
+              )}
             </div>
             <button onClick={uploadHero}>آپلود تصاویر</button>
 
@@ -589,9 +772,25 @@ const AdminPage: React.FC = () => {
 
             {/* فرم افزودن/ویرایش */}
             <div className="collection-form">
-              <input placeholder="عنوان" value={title} onChange={(e) => setTitle(e.target.value)} />
-              <input type="file" accept="image/*" onChange={(e) => setDesktopFile(e.target.files ? e.target.files[0] : null)} />
-              <input type="file" accept="image/*" onChange={(e) => setMobileFile(e.target.files ? e.target.files[0] : null)} />
+              <input
+                placeholder="عنوان"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  setDesktopFile(e.target.files ? e.target.files[0] : null)
+                }
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  setMobileFile(e.target.files ? e.target.files[0] : null)
+                }
+              />
               <button onClick={editingId ? saveEditCollection : addCollection}>
                 {editingId ? "💾 ذخیره تغییرات" : "➕ افزودن کالکشن"}
               </button>
@@ -599,7 +798,6 @@ const AdminPage: React.FC = () => {
 
             {collections.map((c) => (
               <div key={c.id} className="admin-collection-item">
-
                 <div className="collection-info">
                   <img
                     src={c.desktop_image}
@@ -613,7 +811,6 @@ const AdminPage: React.FC = () => {
                   <button onClick={() => editCollection(c)}>ویرایش</button>
                   <button onClick={() => deleteCollection(c.id)}>حذف</button>
                 </div>
-
               </div>
             ))}
           </div>
@@ -668,7 +865,9 @@ const AdminPage: React.FC = () => {
               />
 
               <button
-                onClick={editingSubId ? saveEditSubCollection : addSubCollection}
+                onClick={
+                  editingSubId ? saveEditSubCollection : addSubCollection
+                }
               >
                 {editingSubId ? "💾 ذخیره زیرکالکشن" : "➕ افزودن زیرکالکشن"}
               </button>
@@ -678,7 +877,6 @@ const AdminPage: React.FC = () => {
             <div className="subcollection-list">
               {subCollections.map((s) => (
                 <div key={s.id} className="subcollection-item">
-
                   <div className="subcollection-info">
                     <img
                       src={s.image}
@@ -696,17 +894,15 @@ const AdminPage: React.FC = () => {
 
                   <div>
                     <button onClick={() => editSubCollection(s)}>ویرایش</button>
-                    <button onClick={() => deleteSubCollection(s.id)}>حذف</button>
+                    <button onClick={() => deleteSubCollection(s.id)}>
+                      حذف
+                    </button>
                   </div>
-
                 </div>
               ))}
             </div>
           </div>
         )}
-
-
-
 
         {/* ----- Collection Tab ----- */}
         {activeTab === "bestSeller" && (
@@ -781,9 +977,6 @@ const AdminPage: React.FC = () => {
           </div>
         )}
 
-
-
-
         {activeTab === "faq" && (
           <div className="admin-faq-box">
             <h3>مدیریت سوالات متداول</h3>
@@ -817,6 +1010,89 @@ const AdminPage: React.FC = () => {
                   <div>
                     <button onClick={() => editFaq(f)}>ویرایش</button>
                     <button onClick={() => deleteFaq(f.id)}>حذف</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeTab === "articles" && (
+          <div className="admin-articles-box">
+            <h3>مدیریت مقالات</h3>
+
+            <div className="article-form">
+              <input
+                placeholder="عنوان"
+                value={articleTitle}
+                onChange={(e) => setArticleTitle(e.target.value)}
+              />
+              <input
+                placeholder="نویسنده"
+                value={articleAuthor}
+                onChange={(e) => setArticleAuthor(e.target.value)}
+              />
+              <input
+                placeholder="زمان مطالعه"
+                value={articleReadTime}
+                onChange={(e) => setArticleReadTime(e.target.value)}
+              />
+              <input
+                placeholder="دسته‌بندی"
+                value={articleCategory}
+                onChange={(e) => setArticleCategory(e.target.value)}
+              />
+
+              <textarea
+                placeholder="خلاصه"
+                value={articleSummary}
+                onChange={(e) => setArticleSummary(e.target.value)}
+              />
+              <textarea
+                placeholder="متن کامل"
+                value={articleContent}
+                onChange={(e) => setArticleContent(e.target.value)}
+              />
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setArticleImage(e.target.files?.[0] || null)}
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setArticleDesktop(e.target.files?.[0] || null)}
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setArticleMobile(e.target.files?.[0] || null)}
+              />
+
+              <button onClick={editingArticleId ? saveEditArticle : addArticle}>
+                {editingArticleId ? "💾 ذخیره" : "➕ افزودن"}
+              </button>
+            </div>
+
+            <div className="article-list">
+              {articles.map((a) => (
+                <div key={a.id} className="article-item">
+                  <div className="article-info">
+                    <img
+                      src={a.image}
+                      alt={a.title}
+                      className="article-thumb"
+                    />
+                    <div>
+                      <strong>{a.title}</strong>
+                      <div>{a.category}</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <button onClick={() => editArticle(a)}>ویرایش</button>
+                    <button onClick={() => deleteArticle(a.id)}>حذف</button>
                   </div>
                 </div>
               ))}
