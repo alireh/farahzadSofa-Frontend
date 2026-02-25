@@ -2,7 +2,7 @@
   background: #fff;
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
   margin-top: 20px;
   font-family: 'Vazir', sans-serif;
 }
@@ -11,6 +11,34 @@
   color: #7c3aed;
   font-size: 1.5rem;
   margin-bottom: 16px;
+}
+
+/* input و textarea مشترک */
+.admin-footer-box input,
+.admin-footer-box textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background: #fafafa;
+}
+
+/* ارتفاع textarea */
+.admin-footer-box textarea {
+  min-height: 7em;
+  resize: vertical;
+}
+
+/* فوکوس حرفه‌ای */
+.admin-footer-box input:focus,
+.admin-footer-box textarea:focus {
+  outline: none;
+  border-color: #7c3aed;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
 
 .admin-footer-box h4 {
@@ -24,6 +52,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-bottom: 1em;
 }
 
 .article-item {
@@ -72,7 +101,7 @@
 }
 
 /* اضافه کردن دکمه اصلی */
-.admin-footer-box > button {
+.admin-footer-box>button {
   margin-top: 12px;
   padding: 12px;
   border: none;
@@ -84,12 +113,12 @@
   transition: all 0.2s ease;
 }
 
-.admin-footer-box > button:hover {
+.admin-footer-box>button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(124,58,237,0.25);
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.25);
 }
 
-.social-link img{
+.social-link img {
   width: 2em;
   height: 2em;
 }

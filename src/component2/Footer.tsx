@@ -17,13 +17,13 @@ interface FooterData {
 }
 
 const Footer: React.FC = () => {
-const [footerData, setFooterData] = useState<FooterData | null>(null);
-    useEffect(() => {
-  fetch("/api/footer")
-    .then(r => r.json())
-    .then(setFooterData)
-    .catch(console.error);
-}, []);
+  const [footerData, setFooterData] = useState<FooterData | null>(null);
+  useEffect(() => {
+    fetch("/api/footer")
+      .then(r => r.json())
+      .then(setFooterData)
+      .catch(console.error);
+  }, []);
 
 
   return (

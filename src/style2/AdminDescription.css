@@ -1,0 +1,92 @@
+.admin-description-box {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.07);
+    margin-top: 20px;
+    font-family: 'Vazir', sans-serif;
+    max-width: 720px;
+}
+
+/* عنوان */
+.admin-description-box h3 {
+    color: #7c3aed;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    font-weight: 800;
+}
+
+/* گروه فرم */
+.form-group {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* input و textarea مشترک */
+.admin-description-box input,
+.admin-description-box textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background: #fafafa;
+}
+
+/* ارتفاع textarea */
+.admin-description-box textarea {
+    min-height: 20em;
+    resize: vertical;
+}
+
+/* فوکوس حرفه‌ای */
+.admin-description-box input:focus,
+.admin-description-box textarea:focus {
+    outline: none;
+    border-color: #7c3aed;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+/* placeholder */
+.admin-description-box ::placeholder {
+    color: #9ca3af;
+    font-size: 0.9rem;
+}
+
+/* دکمه */
+.save-btn {
+    margin-top: 8px;
+    padding: 13px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    width: 100%;
+    font-size: 1rem;
+}
+
+/* hover نرم */
+.save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(124, 58, 237, 0.28);
+}
+
+/* active */
+.save-btn:active {
+    transform: scale(0.98);
+}
+
+/* ریسپانسیو */
+@media (max-width: 640px) {
+    .admin-description-box {
+        padding: 20px;
+        border-radius: 16px;
+    }
+}

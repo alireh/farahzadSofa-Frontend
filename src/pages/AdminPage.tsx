@@ -7,6 +7,7 @@ import "../style2/admin-collection.css";
 import "../style2/AdminFaq.css";
 import "../style2/AdminArticles.css";
 import "../style2/AdminFooter.css";
+import "../style2/AdminDescription.css";
 
 interface MenuItem {
   id: number;
@@ -59,6 +60,7 @@ const AdminPage: React.FC = () => {
     | "faq"
     | "articles"
     | "footer"
+    | "description"
   >("menu");
 
   // ===== Menu states =====
@@ -136,6 +138,12 @@ const AdminPage: React.FC = () => {
     copyright: "",
   });
 
+  // ===== Description states =====
+  const [descriptionForm, setDescriptionForm] = useState({
+    title: "",
+    content: "",
+  });
+
   // ===== Protect admin =====
   useEffect(() => {
     if (!token) {
@@ -148,6 +156,8 @@ const AdminPage: React.FC = () => {
     fetchBestSellers();
     fetchFaqs();
     fetchArticles();
+    fetchFooter();
+    fetchDescription();
   }, []);
 
   // ===== Menu CRUD =====
@@ -643,9 +653,17 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchFooter();
-  }, []);
+  const fetchDescription = async () => {
+    try {
+      const res = await fetch("/api/description", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setDescriptionForm(data);
+    } catch (err) {
+      console.error("خطا در دریافت اطلاعات فوتر:", err);
+    }
+  };
 
   const saveFooter = async () => {
     await fetch("/api/footer", {
@@ -655,6 +673,19 @@ const AdminPage: React.FC = () => {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(footerForm),
+    });
+
+    alert("ذخیره شد");
+  };
+
+  const saveDescription = async () => {
+    await fetch("/api/description", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(descriptionForm),
     });
 
     alert("ذخیره شد");
@@ -712,6 +743,12 @@ const AdminPage: React.FC = () => {
             onClick={() => setActiveTab("footer")}
           >
             مدیریت قسمت زیرین سایت
+          </li>
+          <li
+            className={activeTab === "description" ? "active" : ""}
+            onClick={() => setActiveTab("description")}
+          >
+            مدیریت توضیحات
           </li>
         </ul>
       </aside>
@@ -1401,6 +1438,33 @@ const AdminPage: React.FC = () => {
 
             {/* ذخیره */}
             <button onClick={saveFooter}>💾 ذخیره تغییرات</button>
+          </div>
+        )}
+
+        {activeTab === "description" && (
+          <div className="admin-description-box">
+            <h3>مدیریت توضیحات</h3>
+
+            {/* عنوان */}
+            <input
+              placeholder="عنوان"
+              value={descriptionForm.title}
+              onChange={(e) =>
+                setDescriptionForm({ ...descriptionForm, title: e.target.value })
+              }
+            />
+
+            {/* محتوا */}
+            <textarea
+              placeholder="محتوا"
+              value={descriptionForm.content}
+              onChange={(e) =>
+                setDescriptionForm({ ...descriptionForm, content: e.target.value })
+              }
+            />
+
+            {/* ذخیره */}
+            <button onClick={saveDescription}>💾 ذخیره تغییرات</button>
           </div>
         )}
       </main>
