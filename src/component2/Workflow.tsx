@@ -32,8 +32,8 @@ const Workflow: React.FC = () => {
       
       <div className="workflow-image">
         <OptimizedImage
-          desktopSrc="/assets/images/workflow-desktop.webp"
-          mobileSrc="/assets/images/workflow-mobile.webp"
+          desktopSrc="/uploads/workflow-desktop.webp"
+          mobileSrc="/uploads/workflow-mobile.webp"
           alt="نمودار خرید مستقیم از کارخانه"
         />
       </div>

@@ -21,8 +21,8 @@ const CommentVideo: React.FC = () => {
         <h3>گالری تصاویر</h3>
         <div className="gallery-image">
           <OptimizedImage
-            desktopSrc="/assets/images/gallery-desktop.webp"
-            mobileSrc="/assets/images/gallery-mobile.webp"
+            desktopSrc="/uploads/gallery-desktop.webp"
+            mobileSrc="/uploads/gallery-mobile.webp"
             alt="گالری محصولات مبلمان"
           />
           <div className="image-overlay">
