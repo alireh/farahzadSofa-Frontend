@@ -6,6 +6,7 @@ import "../style2/admin-hero.css";
 import "../style2/admin-collection.css";
 import "../style2/AdminFaq.css";
 import "../style2/AdminArticles.css";
+import "../style2/AdminFooter.css";
 
 interface MenuItem {
   id: number;
@@ -57,6 +58,7 @@ const AdminPage: React.FC = () => {
     | "bestSeller"
     | "faq"
     | "articles"
+    | "footer"
   >("menu");
 
   // ===== Menu states =====
@@ -111,6 +113,28 @@ const AdminPage: React.FC = () => {
   const [articleDesktop, setArticleDesktop] = useState<File | null>(null);
   const [articleMobile, setArticleMobile] = useState<File | null>(null);
   const [editingArticleId, setEditingArticleId] = useState<number | null>(null);
+
+  // ===== Footer states =====
+  const [footerForm, setFooterForm] = useState({
+    about_text: "",
+    address: "",
+    phone: "",
+    mobile: "",
+    email: "",
+    useful_links: [{ id: 1, title: "", url: "" }],
+    working_hours: [
+      { id: 1, day: "شنبه تا چهارشنبه", time: "" },
+      { id: 2, day: "پنج‌شنبه", time: "" },
+      { id: 3, day: "جمعه", time: "" },
+    ],
+    socials: [
+      { id: 1, icon: "", url: "" },
+      { id: 2, icon: "", url: "" },
+      { id: 3, icon: "", url: "" },
+      { id: 4, icon: "", url: "" },
+    ],
+    copyright: "",
+  });
 
   // ===== Protect admin =====
   useEffect(() => {
@@ -453,20 +477,20 @@ const AdminPage: React.FC = () => {
   };
 
   const fetchArticles = async () => {
-  try {
-    const res = await fetch("/api/articles/admin", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }); // از مسیر admin استفاده کن
-    const data = await res.json();
-    setArticles(data);
-  } catch (err) {
-    console.error("Error fetching articles:", err);
-  }
-};
+    try {
+      const res = await fetch("/api/articles/admin", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }); // از مسیر admin استفاده کن
+      const data = await res.json();
+      setArticles(data);
+    } catch (err) {
+      console.error("Error fetching articles:", err);
+    }
+  };
 
   const addFaq = async () => {
     const res = await fetch("/api/common_questions", {
@@ -607,6 +631,35 @@ const AdminPage: React.FC = () => {
     setArticleContent(item.full_content || "");
   };
 
+  const fetchFooter = async () => {
+    try {
+      const res = await fetch("/api/footer", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setFooterForm(data);
+    } catch (err) {
+      console.error("خطا در دریافت اطلاعات فوتر:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchFooter();
+  }, []);
+
+  const saveFooter = async () => {
+    await fetch("/api/footer", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(footerForm),
+    });
+
+    alert("ذخیره شد");
+  };
+
   return (
     <div className="admin-layout">
       {/* Sidebar */}
@@ -653,6 +706,12 @@ const AdminPage: React.FC = () => {
             onClick={() => setActiveTab("articles")}
           >
             مدیریت مقالات
+          </li>
+          <li
+            className={activeTab === "footer" ? "active" : ""}
+            onClick={() => setActiveTab("footer")}
+          >
+            مدیریت قسمت زیرین سایت
           </li>
         </ul>
       </aside>
@@ -1099,6 +1158,199 @@ const AdminPage: React.FC = () => {
             </div>
           </div>
         )}
+
+        {activeTab === "footer" && (
+  <div className="admin-articles-box admin-footer-box">
+    <h3>مدیریت فوتر</h3>
+
+    {/* لینک‌های مفید */}
+    <h4>لینک‌های مفید</h4>
+    <div className="article-list">
+      {footerForm.useful_links?.map((l, idx) => (
+        <div key={l.id} className="article-item">
+          <div className="article-info">
+            <input
+              placeholder="عنوان لینک"
+              value={l.title}
+              onChange={(e) => {
+                const newLinks = [...footerForm.useful_links];
+                newLinks[idx].title = e.target.value;
+                setFooterForm({ ...footerForm, useful_links: newLinks });
+              }}
+            />
+            <input
+              placeholder="آدرس لینک"
+              value={l.url}
+              onChange={(e) => {
+                const newLinks = [...footerForm.useful_links];
+                newLinks[idx].url = e.target.value;
+                setFooterForm({ ...footerForm, useful_links: newLinks });
+              }}
+            />
+          </div>
+          <div>
+            <button
+              onClick={() => {
+                const newLinks = footerForm.useful_links.filter((_, i) => i !== idx);
+                setFooterForm({ ...footerForm, useful_links: newLinks });
+              }}
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+      ))}
+      <button
+        onClick={() =>
+          setFooterForm({
+            ...footerForm,
+            useful_links: [
+              ...footerForm.useful_links,
+              { id: Date.now(), title: "", url: "" },
+            ],
+          })
+        }
+      >
+        ➕ لینک جدید
+      </button>
+    </div>
+
+    {/* شبکه‌های اجتماعی */}
+    <h4>شبکه‌های اجتماعی</h4>
+    <div className="article-list">
+      {footerForm.socials?.map((s, idx) => (
+        <div key={s.id} className="article-item">
+          <div className="article-info">
+            <input
+              placeholder="آیکون (مثلا 📱)"
+              value={s.icon}
+              onChange={(e) => {
+                const newSocial = [...footerForm.socials];
+                newSocial[idx].icon = e.target.value;
+                setFooterForm({ ...footerForm, socials: newSocial });
+              }}
+            />
+            <input
+              placeholder="لینک شبکه"
+              value={s.url}
+              onChange={(e) => {
+                const newSocial = [...footerForm.socials];
+                newSocial[idx].url = e.target.value;
+                setFooterForm({ ...footerForm, socials: newSocial });
+              }}
+            />
+          </div>
+          <div>
+            <button
+              onClick={() => {
+                const newSocial = footerForm.socials.filter((_, i) => i !== idx);
+                setFooterForm({ ...footerForm, socials: newSocial });
+              }}
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+      ))}
+      <button
+        onClick={() =>
+          setFooterForm({
+            ...footerForm,
+            socials: [...footerForm.socials, { id: Date.now(), icon: "", url: "" }],
+          })
+        }
+      >
+        ➕ شبکه جدید
+      </button>
+    </div>
+
+    {/* درباره ما */}
+    <textarea
+      placeholder="درباره ما"
+      value={footerForm.about_text}
+      onChange={(e) =>
+        setFooterForm({ ...footerForm, about_text: e.target.value })
+      }
+    />
+
+    {/* اطلاعات تماس */}
+    <input
+      placeholder="آدرس"
+      value={footerForm.address}
+      onChange={(e) => setFooterForm({ ...footerForm, address: e.target.value })}
+    />
+    <input
+      placeholder="تلفن ثابت"
+      value={footerForm.phone}
+      onChange={(e) => setFooterForm({ ...footerForm, phone: e.target.value })}
+    />
+    <input
+      placeholder="موبایل"
+      value={footerForm.mobile}
+      onChange={(e) => setFooterForm({ ...footerForm, mobile: e.target.value })}
+    />
+    <input
+      placeholder="ایمیل"
+      value={footerForm.email}
+      onChange={(e) => setFooterForm({ ...footerForm, email: e.target.value })}
+    />
+
+    {/* ساعات کاری */}
+    <h4>ساعات کاری</h4>
+    <div className="article-list">
+      {footerForm.working_hours?.map((w, idx) => (
+        <div key={w.id} className="article-item">
+          <div className="article-info">
+            <input
+              placeholder="روز"
+              value={w.day}
+              onChange={(e) => {
+                const newHours = [...footerForm.working_hours];
+                newHours[idx].day = e.target.value;
+                setFooterForm({ ...footerForm, working_hours: newHours });
+              }}
+            />
+            <input
+              placeholder="ساعت"
+              value={w.time}
+              onChange={(e) => {
+                const newHours = [...footerForm.working_hours];
+                newHours[idx].time = e.target.value;
+                setFooterForm({ ...footerForm, working_hours: newHours });
+              }}
+            />
+          </div>
+          <div>
+            <button
+              onClick={() => {
+                const newHours = footerForm.working_hours.filter((_, i) => i !== idx);
+                setFooterForm({ ...footerForm, working_hours: newHours });
+              }}
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+      ))}
+      <button
+        onClick={() =>
+          setFooterForm({
+            ...footerForm,
+            working_hours: [
+              ...footerForm.working_hours,
+              { id: Date.now(), day: "", time: "" },
+            ],
+          })
+        }
+      >
+        ➕ ساعت جدید
+      </button>
+    </div>
+
+    {/* ذخیره */}
+    <button onClick={saveFooter}>💾 ذخیره تغییرات</button>
+  </div>
+)}
       </main>
     </div>
   );
