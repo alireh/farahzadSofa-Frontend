@@ -88,3 +88,8 @@
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(124,58,237,0.25);
 }
+
+.social-link img{
+  width: 2em;
+  height: 2em;
+}
