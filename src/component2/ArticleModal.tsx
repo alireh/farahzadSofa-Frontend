@@ -45,7 +45,7 @@ const ArticleModal: React.FC<ArticleModalProps> = ({ isOpen, onClose, article })
 
   // محتوای کامل مقاله (برای نمایش در پاپ‌آپ)
   const getFullContent = () => {
-    if (article.summary) return article.summary;
+    if (article.full_content) return article.full_content;
 
     // محتوای پیش‌فرض بر اساس دسته‌بندی
     const contents: { [key: string]: string } = {
@@ -119,49 +119,73 @@ const ArticleModal: React.FC<ArticleModalProps> = ({ isOpen, onClose, article })
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay modal-wrapper" onClick={onClose}>
+
+      {/* wrapper فول‌واید */}
+      <div className="modal-wrapper" onClick={(e) => e.stopPropagation()}>
+
         <button className="modal-close" onClick={onClose}>×</button>
-        
-        <div className="modal-content">
-          <div className="modal-image">
+
+        <article className="modal-article">
+
+          {/* Header */}
+          <header className="modal-header">
+            <span className="modal-category">{article.category}</span>
+            <h1 className="modal-title">{article.title}</h1>
+
+            <div className="modal-meta">
+              <span className="meta-item">
+                ⏱️ {article.read_time} مطالعه
+              </span>
+
+              {article.author && (
+                <span className="meta-item">
+                  ✍️ {article.author}
+                </span>
+              )}
+
+              {article.created_at && (
+                <span className="meta-item">
+                  📅 {article.created_at}
+                </span>
+              )}
+            </div>
+          </header>
+
+          {/* Image */}
+          <figure className="modal-image">
             <picture>
               <source media="(max-width: 768px)" srcSet={article.mobile_image} />
               <source media="(min-width: 769px)" srcSet={article.desktop_image} />
               <img src={article.image} alt={article.title} />
             </picture>
-            <span className="modal-category">{article.category}</span>
-          </div>
-          
-          <div className="modal-body">
-            <h2 className="modal-title">{article.title}</h2>
-            
-            <div className="modal-meta">
-              {/* <span className="meta-item">
-                <span className="meta-icon">✍️</span>
-                {article.author}
-              </span>
-              <span className="meta-item">
-                <span className="meta-icon">📅</span>
-                {article.created_at}
-              </span> */}
-              <span className="meta-item">
-                <span className="meta-icon">⏱️</span>
-                {article.read_time} مطالعه
-              </span>
-            </div>
-            
-            <div className="modal-full-content">
-              <p className="modal-summary">{article.summary}</p>
-              <div dangerouslySetInnerHTML={{ __html: getFullContent() }} />
-            </div>
-            
-            <div className="modal-footer">
-              <button className="modal-share-btn">📤 اشتراک گذاری</button>
-              <button className="modal-print-btn" onClick={() => window.print()}>🖨️ چاپ مقاله</button>
-            </div>
-          </div>
-        </div>
+          </figure>
+
+          {/* Body */}
+          <section className="modal-body">
+            <p className="modal-summary">{article.summary}</p>
+
+            <div
+              className="modal-full-content"
+              dangerouslySetInnerHTML={{ __html: getFullContent() }}
+            />
+          </section>
+
+          {/* Footer */}
+          <footer className="modal-footer">
+            <button className="modal-share-btn">
+              📤 اشتراک گذاری
+            </button>
+
+            <button
+              className="modal-print-btn"
+              onClick={() => window.print()}
+            >
+              🖨️ چاپ مقاله
+            </button>
+          </footer>
+
+        </article>
       </div>
     </div>
   );
