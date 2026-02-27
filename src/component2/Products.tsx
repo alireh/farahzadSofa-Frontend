@@ -9,17 +9,18 @@ interface Product {
     price: number;
 }
 
-interface HeaderProps {
-    searchQuery: string;
+interface ProductsProps {
+    searchQuery?: string; // تبدیل به optional با مقدار پیش‌فرض
 }
 
-const Products: React.FC<HeaderProps> = ({ searchQuery }) => {
+const Products: React.FC<ProductsProps> = ({ searchQuery = '' }) => {
     const [products, setProducts] = useState<Product[]>([]);
 
     useEffect(() => {
         fetch("/api/best-sellers")
             .then(r => r.json())
-            .then(setProducts);
+            .then(setProducts)
+            .catch(error => console.error('Error fetching products:', error));
     }, []);
 
     const renderStars = (rating: number) => {
@@ -39,9 +40,11 @@ const Products: React.FC<HeaderProps> = ({ searchQuery }) => {
     const formatPrice = (price: number) =>
         price.toLocaleString('fa-IR') + ' تومان';
 
+    // فیلتر کردن محصولات بر اساس جستجو
     const filteredProducts = products.filter(product =>
         product.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
     return (
         <section className="products">
             <h2 className="section-title">محصولات پرفروش</h2>
@@ -62,6 +65,22 @@ const Products: React.FC<HeaderProps> = ({ searchQuery }) => {
                     </div>
                 ))}
             </div>
+
+            {filteredProducts.length === 0 && (
+                <div className="no-products-found">
+                    <div className="empty-state">
+                        <div className="empty-icon">
+                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                                    stroke="#6c5ce7" strokeWidth="2" strokeLinecap="round" />
+                            </svg>
+                        </div>
+                        <h3>محصولی یافت نشد!</h3>
+                        <p>متاسفانه محصولی با این مشخصات پیدا نکردیم.</p>
+                        <span className="suggestion">پیشنهاد: کلمات دیگری را امتحان کنید</span>
+                    </div>
+                </div>
+            )}
         </section>
     );
 };

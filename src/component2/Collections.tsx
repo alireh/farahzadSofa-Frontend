@@ -9,16 +9,16 @@ interface CollectionItem {
   mobile_image: string;
 }
 
-interface HeaderProps {
-  searchQuery: string;
+interface CollectionsProps {
+  searchQuery?: string;
 }
 
-const Collections: React.FC<HeaderProps> = ({ searchQuery }) => {
+const Collections: React.FC<CollectionsProps> = ({ searchQuery = '' }) => {
   const [collections, setCollections] = useState<CollectionItem[]>([]);
   const [selectedCollection, setSelectedCollection] = useState<CollectionItem | null>(null);
 
   useEffect(() => {
-    fetch('/api/collections') // از سرور بگیر
+    fetch('/api/collections')
       .then(res => res.json())
       .then(data => {
         setCollections(data);
@@ -32,6 +32,8 @@ const Collections: React.FC<HeaderProps> = ({ searchQuery }) => {
     const element = document.getElementById('sub-collection');
     if (element) element.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // فیلتر کردن کلکشن‌ها بر اساس جستجو
   const filteredCollections = collections.filter(item =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -39,6 +41,7 @@ const Collections: React.FC<HeaderProps> = ({ searchQuery }) => {
   return (
     <section className="collections">
       <h2 className="section-title">کالکشن‌های ویژه</h2>
+
       <div className="collections-grid">
         {filteredCollections.map(item => (
           <div
@@ -54,11 +57,32 @@ const Collections: React.FC<HeaderProps> = ({ searchQuery }) => {
             <h3>{item.title}</h3>
           </div>
         ))}
+
+        {/* استایل خوشگل برای وقتی کلکشنی پیدا نشد */}
+        {filteredCollections.length === 0 && (
+          <div className="no-collections-found">
+            <div className="empty-state">
+              <div className="empty-icon">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 6H20M4 12H20M4 18H14" stroke="#9b87f5" strokeWidth="2" strokeLinecap="round" />
+                  <circle cx="18" cy="18" r="3" stroke="#9b87f5" strokeWidth="2" />
+                  <path d="M21 21L20 20" stroke="#9b87f5" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </div>
+              <h3>کالکشنی یافت نشد!</h3>
+              <p>متاسفانه کالکشنی با عنوان "{searchQuery}" پیدا نکردیم.</p>
+              <span className="suggestion">✨ پیشنهاد: کلمات دیگری را جستجو کنید</span>
+            </div>
+          </div>
+        )}
       </div>
 
       <div id="sub-collection">
-        {selectedCollection && (
-          <SubCollection collectionId={selectedCollection.id} selectedCollection={selectedCollection.title} />
+        {selectedCollection && filteredCollections.length > 0 && (
+          <SubCollection
+            collectionId={selectedCollection.id}
+            selectedCollection={selectedCollection.title}
+          />
         )}
       </div>
     </section>

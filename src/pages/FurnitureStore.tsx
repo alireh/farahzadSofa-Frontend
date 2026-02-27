@@ -15,7 +15,7 @@ import CommonQuestions from "../component2/CommonQuestions";
 const FurnitureStore = () => {
   const [searchQuery, setSearchQuery] = useState("");
   return (
-    <div className="App">
+    <div className="App" >
       <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <Hero />
       <Collections searchQuery={searchQuery} /> {/* شامل SubCollection داخلی */}
