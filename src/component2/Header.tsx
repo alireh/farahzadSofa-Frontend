@@ -8,11 +8,17 @@ interface MenuItem {
   order_index: number;
 }
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  searchQuery: string;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const Header: React.FC<HeaderProps> = ({ searchQuery, setSearchQuery }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [items, setItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -59,15 +65,15 @@ const Header: React.FC = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
   return (
     <header className={`header ${isScrolled ? "scrolled" : ""}`}>
+
+      {/* هدر اصلی */}
       <div className="header-container">
         <div className="logo">
           <img src="/assets/images/logo.jpg" alt="مبل فرحزاد" />
         </div>
 
-        {/* hamburger */}
         <button
           className={`hamburger ${isMenuOpen ? "active" : ""}`}
           onClick={toggleMenu}
@@ -77,8 +83,6 @@ const Header: React.FC = () => {
           <span></span>
           <span></span>
         </button>
-
-        {/* ✅ منوی داینامیک */}
         <nav className={`nav-menu ${isMenuOpen ? "active" : ""}`}>
           <ul>
             {loading && <li>در حال بارگذاری...</li>}
@@ -94,24 +98,27 @@ const Header: React.FC = () => {
           </ul>
         </nav>
 
-        {/* icons */}
         <div className="header-icons">
-          <span className="icon">🔍</span>
+          <span
+            className="icon"
+            onClick={() => setIsSearchOpen(prev => !prev)}
+          >
+            🔍
+          </span>
           <span className="icon">🛒</span>
-
-          {token ? (
-            <span
-              className="icon"
-              onClick={() => {
-                localStorage.removeItem("token");
-                window.location.reload();
-              }}
-            >
-              🚪
-            </span>
-          ) : null}
         </div>
       </div>
+
+      {/* ✅ این باید اینجا باشد نه داخل header-container */}
+      <div className={`search-bar ${isSearchOpen ? "open" : ""}`}>
+        <input
+          type="text"
+          placeholder="جستجو در کالکشن‌ها و محصولات..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
     </header>
   );
 };

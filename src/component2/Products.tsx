@@ -9,7 +9,11 @@ interface Product {
     price: number;
 }
 
-const Products: React.FC = () => {
+interface HeaderProps {
+    searchQuery: string;
+}
+
+const Products: React.FC<HeaderProps> = ({ searchQuery }) => {
     const [products, setProducts] = useState<Product[]>([]);
 
     useEffect(() => {
@@ -35,12 +39,15 @@ const Products: React.FC = () => {
     const formatPrice = (price: number) =>
         price.toLocaleString('fa-IR') + ' تومان';
 
+    const filteredProducts = products.filter(product =>
+        product.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
     return (
         <section className="products">
             <h2 className="section-title">محصولات پرفروش</h2>
 
             <div className="products-grid">
-                {products.map(product => (
+                {filteredProducts.map(product => (
                     <div key={product.id} className="product-card">
                         <img src={product.image} alt={product.title} />
                         <h3>{product.title}</h3>

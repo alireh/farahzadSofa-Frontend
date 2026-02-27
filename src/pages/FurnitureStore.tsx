@@ -13,12 +13,13 @@ import CommentVideo from "../component2/CommentVideo";
 import CommonQuestions from "../component2/CommonQuestions";
 
 const FurnitureStore = () => {
+  const [searchQuery, setSearchQuery] = useState("");
   return (
     <div className="App">
-      <Header/>
+      <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <Hero />
-      <Collections /> {/* شامل SubCollection داخلی */}
-      <Products />
+      <Collections searchQuery={searchQuery} /> {/* شامل SubCollection داخلی */}
+      <Products searchQuery={searchQuery} />
       <Articles />
       <CommonQuestions />
       <CommentVideo />

@@ -9,7 +9,11 @@ interface CollectionItem {
   mobile_image: string;
 }
 
-const Collections: React.FC = () => {
+interface HeaderProps {
+  searchQuery: string;
+}
+
+const Collections: React.FC<HeaderProps> = ({ searchQuery }) => {
   const [collections, setCollections] = useState<CollectionItem[]>([]);
   const [selectedCollection, setSelectedCollection] = useState<CollectionItem | null>(null);
 
@@ -28,12 +32,15 @@ const Collections: React.FC = () => {
     const element = document.getElementById('sub-collection');
     if (element) element.scrollIntoView({ behavior: 'smooth' });
   };
+  const filteredCollections = collections.filter(item =>
+    item.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <section className="collections">
       <h2 className="section-title">کالکشن‌های ویژه</h2>
       <div className="collections-grid">
-        {collections.map(item => (
+        {filteredCollections.map(item => (
           <div
             key={item.id}
             className={`collection-item ${selectedCollection?.id === item.id ? 'active' : ''}`}

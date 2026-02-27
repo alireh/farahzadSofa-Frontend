@@ -162,6 +162,7 @@
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -205,7 +206,7 @@
     .nav-menu ul {
         gap: 1rem;
     }
-    
+
     .nav-menu ul li a {
         font-size: 0.85rem;
     }
@@ -313,7 +314,7 @@
     .header-icons {
         gap: 0.3rem;
     }
-    
+
     .icon:not(.search-icon) {
         display: none;
     }
@@ -336,6 +337,7 @@
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -353,4 +355,62 @@
         padding-right: 10px;
         transition: padding 0.3s;
     }
+}
+
+/* کانتینر هدر */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #fff;
+}
+
+/* سرچ بار زیر هدر */
+.search-bar {
+    width: 100%;
+    background: #fff;
+    border-top: 1px solid #eee;
+
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.35s ease;
+}
+
+
+/* حالت پیش‌فرض — کاملاً مخفی */
+.search-bar {
+    width: 100%;
+    background: #fff;
+    border-top: 1px solid #eee;
+
+    max-height: 0;
+    padding: 0 5%;
+    /* مهم: عمودی صفر */
+    overflow: hidden;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition:
+        max-height 0.35s ease,
+        padding 0.25s ease,
+        opacity 0.25s ease;
+}
+
+/* وقتی باز می‌شود */
+.search-bar.open {
+    max-height: 90px;
+    padding: 12px 5%;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* input */
+.search-bar input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
 }
