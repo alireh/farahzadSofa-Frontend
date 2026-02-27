@@ -55,6 +55,11 @@ const SubCollection: React.FC<SubCollectionProps> = ({
               <h4>{p.name}</h4>
 
               <div className="price-container">
+                {!p.old_price && (
+                  <span className="old-price" style={{ height: '3.2em' }}>
+
+                  </span>
+                )}
                 {p.old_price && (
                   <span className="old-price">
                     {formatPrice(p.old_price)}

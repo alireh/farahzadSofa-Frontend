@@ -5,8 +5,24 @@
     box-sizing: border-box;
 }
 
+
+/* در فایل App.css یا index.css */
+@font-face {
+    font-family: 'iransans';
+    /* نام دلخواهی که برای فونت انتخاب می‌کنید */
+    src: url('../fonts/Iranian Sans.ttf') format('truetype');
+    /* اگر فرمت‌های دیگر دارید، می‌توانید به‌صورت زیر اضافه کنید */
+    /* src: url('./fonts/Yekan.woff2') format('woff2'), */
+    /*      url('./fonts/Yekan.woff') format('woff'), */
+    /*      url('./fonts/Yekan.ttf') format('truetype'); */
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+    /* برای نمایش سریع‌تر متن با فونت جایگزین تا فونت اصلی بارگیری شود */
+}
+
 body {
-    font-family: 'IRANSans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'iransans', 'Segoe UI', Tahoma, sans-serif !important;
     direction: rtl;
 }
 
