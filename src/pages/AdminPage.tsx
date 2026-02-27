@@ -1,5 +1,5 @@
 // src/pages/AdminPage.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, ChangeEvent } from "react";
 import Modal from "../component2/Modal";
 import "../style2/adminPage.css";
 import "../style2/admin-hero.css";
@@ -8,6 +8,7 @@ import "../style2/AdminFaq.css";
 import "../style2/AdminArticles.css";
 import "../style2/AdminFooter.css";
 import "../style2/AdminDescription.css";
+import "../style2/AdminVideo.css";
 
 interface MenuItem {
   id: number;
@@ -47,6 +48,12 @@ interface ArticleItem {
   created_at: string;
 }
 
+interface UploadProgress {
+  loaded: number;
+  total: number;
+  percentage: number;
+}
+
 const AdminPage: React.FC = () => {
   const token = localStorage.getItem("token");
 
@@ -61,6 +68,7 @@ const AdminPage: React.FC = () => {
     | "articles"
     | "footer"
     | "description"
+    | "video"
   >("menu");
 
   // ===== Menu states =====
@@ -115,6 +123,23 @@ const AdminPage: React.FC = () => {
   const [articleDesktop, setArticleDesktop] = useState<File | null>(null);
   const [articleMobile, setArticleMobile] = useState<File | null>(null);
   const [editingArticleId, setEditingArticleId] = useState<number | null>(null);
+
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [uploadStatus, setUploadStatus] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const controllerRef = useRef<AbortController | null>(null);
+  const [imageUploadProgress, setImageUploadProgress] = useState(0);
+
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string>("");
+  const [imageUploadStatus, setImageUploadStatus] = useState<string>("");
 
   // ===== Footer states =====
   const [footerForm, setFooterForm] = useState({
@@ -691,6 +716,241 @@ const AdminPage: React.FC = () => {
     alert("ذخیره شد");
   };
 
+
+
+  // پاکسازی URL شی هنگام unmount
+  useEffect(() => {
+    return () => {
+      if (videoPreview) {
+        URL.revokeObjectURL(videoPreview);
+      }
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+    };
+  }, [videoPreview]);
+
+  const validateFile = (file: File): string | null => {
+    // بررسی حجم فایل (حداکثر 100 مگابایت)
+    if (file.size > 100 * 1024 * 1024) {
+      return 'حجم فایل نباید بیشتر از 100 مگابایت باشد';
+    }
+
+    // بررسی فرمت فایل
+    const validTypes = ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/x-msvideo'];
+    if (!validTypes.includes(file.type)) {
+      return 'فرمت فایل باید mp4، mpeg، mov یا avi باشد';
+    }
+
+    return null;
+  };
+
+  const handleFileSelect = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const validationError = validateFile(file);
+    if (validationError) {
+      setError(validationError);
+      setSelectedFile(null);
+      if (videoPreview) {
+        URL.revokeObjectURL(videoPreview);
+        setVideoPreview(null);
+      }
+      return;
+    }
+
+    setError('');
+    setSelectedFile(file);
+
+    // ایجاد پیش‌نمایش
+    if (videoPreview) {
+      URL.revokeObjectURL(videoPreview);
+    }
+    const previewUrl = URL.createObjectURL(file);
+    setVideoPreview(previewUrl);
+  };
+
+  const handleUpload = async (): Promise<void> => {
+    if (!selectedFile) {
+      setError('لطفاً یک فایل انتخاب کنید');
+      return;
+    }
+
+    // ایجاد AbortController برای امکان لغو آپلود
+    controllerRef.current = new AbortController();
+
+    const formData = new FormData();
+    formData.append('video', selectedFile);
+
+    try {
+      setIsUploading(true);
+      setUploadStatus('در حال آپلود...');
+      setError('');
+      setUploadProgress(0);
+
+      const response = await fetch('/api/upload-video', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+        signal: controllerRef.current.signal,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'خطا در آپلود فایل');
+      }
+
+      const data = await response.json();
+
+      setUploadProgress(100);
+      setUploadStatus('آپلود با موفقیت انجام شد!');
+      console.log('پاسخ سرور:', data);
+
+      // پاک کردن فرم بعد از آپلود موفق
+      setTimeout(() => {
+        resetForm();
+      }, 3000);
+
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        setUploadStatus('آپلود لغو شد');
+      } else {
+        console.error('خطا در آپلود:', error);
+        setUploadStatus('خطا در آپلود فایل');
+        setError(error.message || 'خطا در ارتباط با سرور');
+      }
+    } finally {
+      setIsUploading(false);
+      controllerRef.current = null;
+    }
+  };
+
+  const handleCancelUpload = (): void => {
+    if (controllerRef.current) {
+      controllerRef.current.abort();
+    }
+  };
+
+  const resetForm = (): void => {
+    setSelectedFile(null);
+
+    if (videoPreview) {
+      URL.revokeObjectURL(videoPreview);
+    }
+
+    setVideoPreview(null);
+    setUploadProgress(0);
+    setUploadStatus('');
+    setError('');
+
+    // ⭐⭐⭐ خیلی مهم
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  // تعیین کلاس دکمه بر اساس وضعیت
+  const getButtonClass = () => {
+    let buttonClass = 'upload-button';
+    if (!selectedFile || uploadProgress > 0) {
+      buttonClass += ' disabled';
+    }
+    return buttonClass;
+  };
+
+  // تعیین کلاس وضعیت
+  const getStatusClass = () => {
+    if (!uploadStatus) return '';
+    return uploadStatus.includes('موفق') ? 'success' : 'status';
+  };
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setImageError("فایل انتخابی تصویر نیست");
+      return;
+    }
+
+    setSelectedImage(file);
+    setImagePreview(URL.createObjectURL(file));
+    setImageError("");
+  };
+
+  const handleImageUpload = async () => {
+    if (!selectedImage) return;
+
+    const formData = new FormData();
+    formData.append("image", selectedImage);
+
+    try {
+      setImageUploadStatus("در حال آپلود...");
+
+      const response = await fetch("/api/upload-image", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setImageUploadStatus("آپلود با موفقیت انجام شد");
+      } else {
+        setImageUploadStatus("خطا در آپلود");
+      }
+    } catch (error) {
+      setImageUploadStatus("خطا در ارتباط با سرور");
+    }
+  };
+  const getImageStatusClass = () => {
+    if (!imageUploadStatus) return "";
+
+    if (imageUploadStatus.includes("موفق")) {
+      return "status success";
+    }
+
+    if (imageUploadStatus.includes("خطا")) {
+      return "status error";
+    }
+
+    if (imageUploadStatus.includes("در حال")) {
+      return "status loading";
+    }
+
+    return "status";
+  };
+
+  const getImageButtonClass = () => {
+    let cls = "upload-button";
+
+    if (!selectedImage) {
+      cls += " disabled";
+    }
+
+    if (imageUploadStatus.includes("در حال")) {
+      cls += " loading";
+    }
+
+    if (imageUploadStatus.includes("موفق")) {
+      cls += " success";
+    }
+
+    return cls;
+  };
+
   return (
     <div className="admin-layout">
       {/* Sidebar */}
@@ -749,6 +1009,12 @@ const AdminPage: React.FC = () => {
             onClick={() => setActiveTab("description")}
           >
             مدیریت توضیحات
+          </li>
+          <li
+            className={activeTab === "video" ? "active" : ""}
+            onClick={() => setActiveTab("video")}
+          >
+            مدیریت ویدئو
           </li>
         </ul>
       </aside>
@@ -1466,6 +1732,136 @@ const AdminPage: React.FC = () => {
             {/* ذخیره */}
             <button onClick={saveDescription}>💾 ذخیره تغییرات</button>
           </div>
+        )}
+
+        {activeTab === "video" && (
+          <div className="admin-video-box">
+            <h3>مدیریت ویدئو</h3>
+            <div className="container">
+              <h2 className="title">آپلود ویدیو</h2>
+
+              <div className="upload-area">
+
+                <input
+                  ref={fileInputRef}   // ⭐⭐⭐ این خیلی مهمه
+                  type="file"
+                  accept="video/*"
+                  onChange={handleFileSelect}
+                  className="file-input"
+                  id="video-upload"
+                />
+
+                <label htmlFor="video-upload" className="file-label">
+                  {selectedFile ? selectedFile.name : 'انتخاب فایل ویدیویی'}
+                </label>
+
+                {videoPreview && (
+                  <div className="preview-container">
+                    <video
+                      src={videoPreview}
+                      controls
+                      className="preview"
+                    />
+                  </div>
+                )}
+
+                {error && (
+                  <div className="error">
+                    {error}
+                  </div>
+                )}
+
+                {uploadProgress > 0 && uploadProgress < 100 && (
+                  <div className="progress-container">
+                    <div
+                      className="progress-bar"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                    <span className="progress-text">{uploadProgress}%</span>
+                  </div>
+                )}
+
+                {uploadStatus && (
+                  <div className={getStatusClass()}>
+                    {uploadStatus}
+                  </div>
+                )}
+
+                <button
+                  onClick={handleUpload}
+                  disabled={!selectedFile || uploadProgress > 0}
+                  className={getButtonClass()}
+                >
+                  آپلود ویدیو
+                </button>
+              </div>
+            </div>
+
+            <h3>مدیریت تصویر</h3>
+
+            <div className="container">
+              <h2 className="title">آپلود تصویر</h2>
+
+              <div className="upload-area">
+
+                <input
+                  ref={fileInputRef}   // همون ref قبلی اگر جداست imageFileInputRef بگذار
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}   // ⭐ هندلر جدا برای تصویر
+                  className="file-input"
+                  id="image-upload"
+                />
+
+                <label htmlFor="image-upload" className="file-label">
+                  {selectedImage ? selectedImage.name : 'انتخاب فایل تصویری'}
+                </label>
+
+                {imagePreview && (
+                  <div className="preview-container">
+                    <img
+                      src={imagePreview}
+                      alt="preview"
+                      className="preview"
+                    />
+                  </div>
+                )}
+
+                {imageError && (
+                  <div className="error">
+                    {imageError}
+                  </div>
+                )}
+
+                {imageUploadProgress > 0 && imageUploadProgress < 100 && (
+                  <div className="progress-container">
+                    <div
+                      className="progress-bar"
+                      style={{ width: `${imageUploadProgress}%` }}
+                    />
+                    <span className="progress-text">{imageUploadProgress}%</span>
+                  </div>
+                )}
+
+                {imageUploadStatus && (
+                  <div className={getImageStatusClass()}>
+                    {imageUploadStatus}
+                  </div>
+                )}
+
+                <button
+                  onClick={handleImageUpload}
+                  disabled={!selectedImage || imageUploadProgress > 0}
+                  className={getImageButtonClass()}
+                >
+                  آپلود تصویر
+                </button>
+
+              </div>
+            </div>
+          </div>
+
+
         )}
       </main>
     </div>
